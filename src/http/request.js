@@ -8,7 +8,13 @@ const SENT = process.env.NODE_ENV === 'development' ? 'Sent_Post' : 'Sent'
 const request = async (code, data) => {
     return new Promise((resolve, reject) => {
         window.OTS[SENT](code, null, data, function (data) {
-            resolve(JSON.parse(data))
+            let res = JSON.parse(data)
+            let { status } = res
+            if (status === 1) {
+              resolve(res)
+            } else {
+              reject(res)
+            }
         }, null)
     })
 }
