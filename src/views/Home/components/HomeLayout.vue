@@ -1,7 +1,9 @@
 <template>
-    <div>
-        <el-container>
-            <el-aside width="200px"><Nav /></el-aside>
+    <div style="height: 100%">
+        <el-container style="height: 100%">
+            <el-aside width="120px">
+              <Nav />
+            </el-aside>
             <el-main>
                 <router-view></router-view>
             </el-main>
@@ -21,14 +23,10 @@ export default {
 .el-aside {
     background-color: #D3DCE6;
     color: #333;
-    text-align: center;
-    line-height: 200px;
   }
-  
+
   .el-main {
     background-color: #E9EEF3;
     color: #333;
-    text-align: center;
-    line-height: 160px;
   }
 </style>

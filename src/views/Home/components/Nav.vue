@@ -1,13 +1,7 @@
 <template>
-  <div>
-    <div>
-        <ul>
-            <Li>1</Li>
-            <Li>2</Li>
-            <Li>3</Li>
-            <Li>4</Li>
-            <Li>5</Li>
-        </ul>
+  <div class="nav-container">
+    <div class="ots-logo-container">
+      <span>ots</span>
     </div>
   </div>
 </template>
@@ -17,4 +11,10 @@ export default {
 }
 </script>
 <style scoped>
+  .nav-container {
+    height: 100%;
+  }
+  .ots-logo-container {
+    height: 60px;
+  }
 </style>
