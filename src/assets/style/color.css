@@ -1,6 +1,21 @@
 .col_red{
     color:#ff4444;
 }
+.col_black{
+	color: #272E40;
+}
+.col_grayQ{
+	color: #9CA5AD;
+}
+.col_grayZ{
+	color: #7784A1;
+}
 .col_green{
-    color: #55cc55;
+	color: #22E99D;
+}
+.col_red{
+	color: #F44A4A;
+}
+.col_blue{
+	color: #198CFF;
 }

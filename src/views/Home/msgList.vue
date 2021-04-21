@@ -1,11 +1,15 @@
 <template>
   <div>
-      消息列表
+     <TopLine name="消息中心" />
   </div>
 </template>
 <script>
+import TopLine from './components/TopLine'
 export default {
-  name: 'MsgList'
+    name: 'MsgList',
+    components: {
+      TopLine
+    }
 }
 </script>
 <style scoped>

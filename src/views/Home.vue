@@ -12,12 +12,8 @@ import { getTenate } from '@/http/modules/common'
 export default {
   name: 'Home',
   async mounted () {
-    console.log(123)
-    // window.OTS.Sent_Post('GetSchoolLogo', null, null, function (data) {
-    //   console.log(JSON.parse(data))
-    // }, null)
+    
     const { data } = await getTenate()
-    console.log(data)
   }
 }
 </script>

@@ -20,13 +20,13 @@ export default {
 }
 </script>
 <style scoped>
-.el-aside {
+  .el-aside {
     background-color: #D3DCE6;
     color: #333;
   }
 
   .el-main {
-    background-color: #E9EEF3;
+    background-color: rgba(250,251,252,1);
     color: #333;
   }
 </style>

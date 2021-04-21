@@ -2,5 +2,5 @@ import { Login } from '../api'
 import request from '../request'
 
 export const login = (data) => {
-    return request(Login, JSON.stringify(data))
+    return request(Login, data)
 }

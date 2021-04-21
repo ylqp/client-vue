@@ -15,7 +15,6 @@ const mutations = {
 }
 const actions = {
     async getUserFPSettings ({ commit }) {
-        
         const { data } = await getUserFpSettings()
         commit('setUserFPSettings', data)
     }

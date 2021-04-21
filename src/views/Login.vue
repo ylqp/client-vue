@@ -24,7 +24,7 @@
 <script>
 import { login } from '@/http/modules/login'
 import { getTenate } from '@/http/modules/common'
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 const loginStatus = {
     'needCheckCode': '需要验证码',
     'checkCodeError': '验证码错误',
@@ -65,8 +65,12 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState('examType', ['examTypeList']),
+  },
   methods: {
     ...mapActions('user', ['getUserFPSettings']),
+    ...mapActions('examType', ['geExamTypeList']),
     async loginIn () {
       // 1. 表单验证
       await this.$refs.form.validate()
@@ -79,8 +83,15 @@ export default {
       if (JSON.parse(data.succeeded)) {
         // 获取用户信息
         await this.getUserFPSettings()
+        // 获取考试列表信息
+        await this.geExamTypeList()
         // 跳转首页
-        this.$router.push('/')
+        this.$router.push({
+          name: 'examList',
+          params: {
+            id: this.examTypeList[0].id
+          }
+        })
       }
     },
     getLoginStatus (reason) {
@@ -89,7 +100,6 @@ export default {
   },
   async mounted () {
     const { data } = await getTenate()
-    console.log(data)
   }
 }
 </script>

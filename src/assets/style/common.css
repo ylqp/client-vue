@@ -1,3 +1,22 @@
 @import './color.css'; /* 颜色*/
 @import './font.css'; /* 字体*/
 @import './mp.css'; /* 间距*/
+
+.cp { cursor: pointer; }
+
+/* 列表样式 */
+.tableLine .tline{display:flex;justify-content:space-between; line-height: 60px;height: 60px;font-size:13px;color:#7784A1;text-align: center;margin-bottom:8px;border-radius: 2px;box-shadow: 0px 5px 6px 0px rgba(220,220,220,0.9);background:rgba(255,255,255,1);}
+.tableLine .tline.thead{background: #fbfcfc;box-shadow:none;}
+.tableLine .tline.thead.curr{background: #fbfcfc; box-shadow:none;}
+.tableLine .tline.thead:hover{background: #fbfcfc;box-shadow:none;}
+.tableLine .tline.curr{background-color:#e4efff;border:1px solid #cce2ff;}
+.tableLine .tline:hover{background:rgba(235,249,255,1);box-shadow:0px 4px 24px 0px rgba(190,223,255,0.9);}
+.tableLine .tline .item{display: inline-block;/* width: 10%;*/overflow: hidden; text-overflow: ellipsis;white-space: nowrap;float:left;}
+.tableLine .tline .item.w5{width: 5%;}
+.tableLine .tline .item.w10{width: 10%;}
+.tableLine .tline .item.w15{width: 15%;overflow: inherit;}
+.tableLine .tline .item.w20{width: 20%;}
+.tableLine .tline .item.w25{width: 25%;}
+.tableLine .tline .item.w30{width: 30%;}
+.tableLine .tline .item.w70{width: 70%;}
+.tableLine .tline .item.tl{text-align:left;padding-left: 20px;}

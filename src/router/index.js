@@ -7,7 +7,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/login',
+    path: '/',
     name: 'Login',
     component: Login
   },
@@ -22,8 +22,8 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     children:[
       {
-        path: '',
-        name: 'index',
+        path: 'examlist/:id',
+        name: 'examList',
         meta: {
           title: '首页'
         },
@@ -48,14 +48,53 @@ const routes = [
     ]
   },
   {
+    path: '/check',
+    name: 'checkExam',
+    meta: {
+      title: '考前检测页'
+    },
+    component: () => import('../views/Exam/CheckExam.vue')
+  },
+  {
+    path: '/startexam',
+    name: 'startExam',
+    meta: {
+      title: '考前人脸识别'
+    },
+    component: () => import('../views/Exam/StartExam.vue')
+  },
+  {
+    path: '/exam',
+    name: 'exam',
+    meta: {
+      title: '考试页'
+    },
+    component: () => import('../views/Exam/Exam.vue')
+  },
+  {
+    path: '/endexam',
+    name: 'endExam',
+    meta: {
+      title: '考试页'
+    },
+    component: () => import('../views/Exam/EndExam.vue')
+  },
+  {
     path: '*',
     name: '404',
     component: () => import('../views/ErrorPage.vue')
   }
 ]
+// 解决选择当前路由报错
+const originalPush = VueRouter.prototype.push
+   VueRouter.prototype.push = function push(location) {
+   return originalPush.call(this, location).catch(err => err)
+}
 
 const router = new VueRouter({
   routes
 })
+
+
 
 export default router

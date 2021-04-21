@@ -1,11 +1,15 @@
 <template>
   <div>
-      支付列表
+     <TopLine name="支付中心" />
   </div>
 </template>
 <script>
+import TopLine from './components/TopLine'
 export default {
-  name: 'PayList'
+    name: 'PayList',
+    components: {
+      TopLine
+    }
 }
 </script>
 <style scoped>
