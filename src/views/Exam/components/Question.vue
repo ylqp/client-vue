@@ -49,8 +49,12 @@ export default {
         this.text = JSON.stringify(this.queItem)
     },
     watch: {
-        queItem: function () {
-            console.log('que-1')
+        queItem: {
+            handler (newContent, oldContent) {
+                this.queItem = newContent
+            },
+            // 对象需要深度监听
+            deep: true
         }
     }
 }

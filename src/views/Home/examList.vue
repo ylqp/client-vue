@@ -131,7 +131,13 @@ export default {
       if (data.state === 0) {
 
         let routePath = getStateRouter(data.goWhere);
-
+        this.$router.push({
+            name: 'checkExam',
+            params: {
+              isFace: this.examTypeInfo.takePhotoInTest,
+              eid: examObj.testactivityarrangementid
+            }
+        })
         if (!routePath) {
           this.$alert(data.message, '提示', {
             type: 'warning',

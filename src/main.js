@@ -9,7 +9,7 @@ import '@/assets/style/reset.css'
 import '@/assets/style/common.css'
 Vue.config.productionTip = false
 Vue.use(plugins)
-new Vue({
+window.WEBOTS = new Vue({
   router,
   store,
   render: h => h(App)

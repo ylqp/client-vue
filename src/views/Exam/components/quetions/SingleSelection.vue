@@ -18,12 +18,15 @@ export default {
     props: ['question'],
     data () {
         return {
-            answerArea: this.question.answerArea,
+            // answerArea: this.question.answerArea,
             answer: this.question.webData.answer
         }
     },
     computed: {
-        ...mapState(['options'])
+        ...mapState(['options']),
+        answerArea: () => {
+            return this.question.answerArea
+        }
     },
     methods: {
         choiceOption (el) {
@@ -38,13 +41,13 @@ export default {
         
     },
     watch: {
-        question: {
-            handler (newContent, oldContent) {
-                this.answerArea = newContent.answerArea
-            },
-            // 对象需要深度监听
-            // deep: true
-        }
+        // question: {
+        //     // handler (newContent, oldContent) {
+        //     //     this.answerArea = newContent.answerArea
+        //     // },
+        //     // 对象需要深度监听
+        //     // deep: true
+        // }
     }
 }
 </script>
