@@ -50,8 +50,7 @@ export default {
     },
     watch: {
         queItem: function () {
-            console.log(1)
-            this.$set(this.queItem, this.queItem)
+            console.log('que-1')
         }
     }
 }

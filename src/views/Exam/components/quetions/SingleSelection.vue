@@ -36,6 +36,15 @@ export default {
     },
     mounted () {
         
+    },
+    watch: {
+        question: {
+            handler (newContent, oldContent) {
+                this.answerArea = newContent.answerArea
+            },
+            // 对象需要深度监听
+            // deep: true
+        }
     }
 }
 </script>
