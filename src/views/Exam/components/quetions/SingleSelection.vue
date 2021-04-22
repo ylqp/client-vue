@@ -6,8 +6,8 @@
               :class="answer==el.id? 'choiced' : ''"
               @click="choiceOption(el)"
         >
-            <div>{{options[index]}}</div>
-            <div v-html="el.content"></div>
+            <div class="option">{{options[index]}}</div>
+            <div class="optCon ml5" v-html="el.content"></div>
         </div>
     </div>
 </template>
@@ -39,14 +39,38 @@ export default {
     }
 }
 </script>
-<style scoped>
+<style lang="less" scoped>
     .choiceOption {
-        line-height: 28px;
-        margin-bottom: 12px;
+        margin-top: 8px;
+        font-size: 19px;
+        cursor: pointer;
+        border-radius: 26px;
+        padding: 8px;
         display: flex;
+        align-items: center;
+        .option {
+            width: 40px;
+            height: 40px;
+            color: #FFF;
+            text-align: center;
+            line-height: 40px;
+            border-radius: 20px;
+            background: rgba(212, 225, 238, 1);
+        }
+        .optCon {
+            color: #7784A1;
+            font-size: 18px;
+        }
     }
-    .choiced {
-        background: #4499ff;
-        color: #fff;
+    .choiceOption.choiced {
+        background: #EBF9FF;
+        .option {
+            background: #198CFF;
+        }
+        .optCon {
+            color: #198CFF;
+            font-weight: bold;
+        }
+
     }
 </style>

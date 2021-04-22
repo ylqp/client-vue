@@ -21,7 +21,7 @@ export default {
   data () {
     return {
       editorConfig: {},
-      isEditor: true,
+      isEditor: false,
       inputAreaList: []
     }
   },

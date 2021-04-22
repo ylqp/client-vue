@@ -19,15 +19,51 @@
                     <Question :queItem="currentQue" />
                 </div>
                 <div class="footer mt20 mb20">
-                    <div class="nextBtn" @click="getNextQue">下一题</div>
+                    <div class="nextBtn" :class="isCanNext ? '' : 'gray'" @click="getNextQue">下一题</div>
                 </div>
             </div>
             <div class="right">
                 <div id="cameraArea" class="camArea" v-if="isShowCamera"></div>
                 <div class="tika">
-                    <div class="time"></div>
-                    <div class="tishu"></div>
-                    <div class="timu"></div>
+                    <div class="time">
+                        <img src="@/assets/images/time.png" class="mr5" />
+                        <span>00:00</span>
+                    </div>
+                    <div class="tishu">
+                        <img src="@/assets/images/tika.png" class="mr5" />
+                        <span class="col_green">1</span>
+                        <span class="col_grayZ">/2</span>
+                        <span class="col_grayQ ml5">题</span>
+                    </div>
+                    <div class="timu">
+                        <div class="tips">
+                            <span class="done mr5"></span>
+                            <span>已做</span>
+                            <span class="nodo mr5 ml20"></span>
+                            <span>未做</span>
+                        </div>
+                        <el-scrollbar class="tikaCon" style="height:calc(100% - 50px)">
+                            <div v-for="item in questionBack" :key="item.id">
+                                <h4>{{`${item.usedsequence}、${item.name}`}}</h4>
+                                <div class="mt15 mb5">
+                                    <span class="tiItem" 
+                                          :class="queItem.webData.isAnswer ? 'done' : ''"
+                                          v-for="(queItem, index) in item.paperQuestionList" :key="queItem.questionId"
+                                          @click="goQue(queItem.questionId)"
+                                    >
+                                        {{index + 1}}
+                                    </span>
+                                </div>
+                            </div>
+                        </el-scrollbar>
+                    </div>
+                    <div class="submitBox">
+                        <div class="submitBtn">
+                            <i class="iconfont icon-tijiao"></i>
+                            <span class="ml10">交卷</span>
+                        </div>
+                        <div class="helpLink">考试遇到问题？</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -55,6 +91,7 @@ export default {
             currentQue: {},
             // 当前index
             currentIndex: 0,
+            isCanNext: true,
             // 从开始接口获取到 ===> 需要传回submit的参数
             initialParam: {},
         }
@@ -137,9 +174,28 @@ export default {
             
         },
         getNextQue () {
+            if (!this.isCanNext) {
+                this.$message('已经是最后一题啦~')
+                return
+            }
             this.currentIndex++
+        },
+        goQue (qid) {
+            this.questionList.forEach((item, index)=> {
+                if (item.questionId === qid) {
+                    this.currentIndex = index
+                }
+            })
+        }
+    },
+    watch: {
+        currentIndex: function () {
+            if ((this.currentIndex + 1) >= this.questionList.length) {
+                this.isCanNext = false
+            } else {
+                this.isCanNext = true
+            }
             this.currentQue = this.questionList[this.currentIndex]
-            console.log(JSON.stringify(this.currentQue))
         }
     }
 }
@@ -205,6 +261,9 @@ export default {
                     cursor: pointer;
                     font-size: 20px;
                 }
+                .nextBtn.gray{
+                    background: rgba(231, 236, 241, 1);
+                }
             }
         }
         .right {
@@ -229,6 +288,9 @@ export default {
                     font-size: 16px;
                     letter-spacing: 2px;
                     background: rgba(255, 255, 255, 1);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
                 }
                 .tishu {
                     height: 60px;
@@ -236,14 +298,90 @@ export default {
                     font-size: 16px;
                     text-align: center;
                     background: rgba(255, 255, 255, 1);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
                 }
                 .timu {
-                    height: calc(100% - 240px);
+                    height: calc(100% - 220px);
                     background: rgba(235, 249, 255, 1);
                     box-shadow: inset 0px 14px 10px -15px #7ea9bb;
+                    .tips {
+                        height: 50px;
+                        line-height: 50px;
+                        text-align: center;
+                        .done {
+                            display: inline-block;
+                            width: 10px;
+                            height: 10px;
+                            background: rgba(93, 174, 255, 1);
+                            border-radius: 2px;
+                        }
+                        .nodo {
+                            display: inline-block;
+                            width: 10px;
+                            height: 10px;
+                            background: rgba(255, 255, 255, 1);
+                            border-radius: 2px;
+                            border: 1px solid rgba(156, 165, 173, 1);
+                        }
+                    }
+                    .tikaCon {
+                        padding-left: 20px;
+                        h4 {
+                            font-size: 13px;
+                            font-weight: 500;
+                            color: #404E6F;
+                        }
+                        .tiItem {
+                            display: inline-block;
+                            width: 24px;
+                            height: 24px;
+                            line-height: 23px;
+                            text-align: center;
+                            border: 1px solid #9CA5AD;
+                            background: #fff;
+                            color: #666a77;
+                            border-radius: 12px;
+                            margin-left: 10px;
+                            margin-bottom: 10px;
+                            cursor: pointer;
+                        }
+                        .tiItem.done{
+                            background: #5DAEFF;
+                            border: 1px solid #5DAEFF;
+                            color: #fff;
+                        }
+                    }
+                }
+                .submitBox {
+                    background-color: #fff;
+                    height: 100px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    .submitBtn {
+                        width: 150px;
+                        height: 40px;
+                        color: #fff;
+                        background: linear-gradient(45deg, #0067FF 0%, #2692FF 100%);
+                        box-shadow: 0px 4px 20px 0px rgb(187 197 205 / 50%);
+                        border-radius: 3px;
+                        text-align: center;
+                        line-height: 40px;
+                        font-size: 18px;
+                        margin-bottom: 8px;
+                        cursor: pointer;
+                    }
+                    .helpLink {
+                        color: #9CA5AD;
+                        text-decoration: underline;
+                        cursor: pointer;
+                    }
                 }
             }
         }
     }
-
+    
 </style>

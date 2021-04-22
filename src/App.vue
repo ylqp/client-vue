@@ -11,4 +11,10 @@
   .el-pagination {
     text-align: center;
   }
+  .el-scrollbar .el-scrollbar__wrap{
+      overflow-x: hidden !important;
+      /* overflow: scroll;
+      width: 110%;
+      height: 120%; */
+  }
 </style>

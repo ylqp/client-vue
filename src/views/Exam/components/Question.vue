@@ -4,7 +4,7 @@
             <span class="mr5 fl">{{queItem.usedsequence + '.'}}</span>
             <span v-html="queItem.stem"></span>
         </div>
-        <div class="quetionContent mt20">
+        <div class="quetionContent mt30">
             <SingleSelection v-if="queItem.answerMode === 'SingleSelection'" :question="queItem"/>
             <MultiSelection v-if="queItem.answerMode === 'MultiSelection'" :question="queItem"/>
             <Judgement v-if="queItem.answerMode === 'Judgement'" :question="queItem"/>
@@ -51,7 +51,7 @@ export default {
     watch: {
         queItem: function () {
             console.log(1)
-            this.text = JSON.stringify(this.queItem)
+            this.$set(this.queItem, this.queItem)
         }
     }
 }

@@ -7,6 +7,7 @@
         :class="answer == item.id ? 'chosen' : ''"
         @click="chooseOption(item.id)"
       >
+        <i class="iconfont" :class="item.webContent==='正确' ? 'icon-dui' : 'icon-cuo'"></i>
         {{item.webContent}}
       </div>
   </div>
@@ -48,15 +49,19 @@ export default {
 </script>
 <style scoped>
 .judgeOption {
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 15px;
-  padding: 5px 25px;
-  margin-right: 30px;
-  cursor: pointer;
+    display: inline-block;
+    width: 90px;
+    height: 40px;
+    background: rgba(156, 165, 173, 1);
+    border-radius: 100px;
+    color: #FFF;
+    text-align: center;
+    line-height: 40px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 30px;
 }
 .chosen {
   background: #4499ff;
-  color: #fff;
 }
 </style>

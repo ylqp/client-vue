@@ -7,6 +7,10 @@ const getEditorConfig = (queType) => {
         initialFrameHeight: queType === 'BlankFilling' ? 80 : 200,
         // 初始容器宽度
         initialFrameWidth: '90%',
+        // 元素路径
+        elementPathEnabled : false,
+        // 启用自动保存
+        enableAutoSave: false,
         // 上传文件接口（这个地址是我为了方便各位体验文件上传功能搭建的临时接口，请勿在生产环境使用！！！部署在国外的服务器，如果无法访问，请自备梯子）
         // serverUrl: 'http://35.201.165.105:8000/controller.php',
         serverUrl: '/api/resources/ots/student/ueditorjsp/jsp/controller.jsp?name=cate',
