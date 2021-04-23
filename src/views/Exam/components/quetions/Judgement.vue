@@ -22,9 +22,6 @@ export default {
       optionList: []
     }
   },
-  created () {
-    this.initialOption()
-  },
   methods: {
     initialOption () {
       let options = this.question.answerArea.optionList
@@ -43,8 +40,13 @@ export default {
       this.question.webData.answer = id
       this.question.webData.isAnswer = true
     }
+  },
+  watch: {
+      question: {
+          handler: 'initialOption',
+          immediate: true
+      }
   }
-
 }
 </script>
 <style scoped>

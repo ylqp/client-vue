@@ -22,13 +22,14 @@ export default {
         }
     },
     created () {
-        this.initialOption()
+        // this.initialOption()
     },
     computed: {
         ...mapState(['options'])
     },
     methods: {
         initialOption () {
+            console.log(123)
             let options = this.question.answerArea.optionList
             let answers = this.question.webData.answer ? this.question.webData.answer : [] // 此时为数组
             options.forEach(item => {
@@ -63,6 +64,12 @@ export default {
                 this.question.webData.answer = ''
                 this.question.webData.isAnswer = false
             } 
+        }
+    },
+    watch: {
+        question: {
+            handler: 'initialOption',
+            immediate: true
         }
     }
 }
