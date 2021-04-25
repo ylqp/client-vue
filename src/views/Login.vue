@@ -72,6 +72,10 @@ export default {
     ...mapActions('user', ['getUserFPSettings']),
     ...mapActions('examType', ['geExamTypeList']),
     async loginIn () {
+      this.$otsMessage({
+        content : '测试message'
+      })
+      return
       // 1. 表单验证
       await this.$refs.form.validate()
       // 2. 处理参数

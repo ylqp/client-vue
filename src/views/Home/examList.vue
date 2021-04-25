@@ -92,7 +92,7 @@ export default {
     },
     async getExamList () {
       const { data } = await getExamListByTypeIdAndCoursecode(this.examListParams)
-      
+
       let oData = JSON.parse(data)
       // console.log(oData)
       // 处理考试列表
@@ -120,7 +120,7 @@ export default {
       console.log(examList)
     },
     async startExam (examObj) {
-      
+
       // 判断可否考试
       let params = {
         isFaceTest: this.examTypeInfo.takePhotoInTest,
