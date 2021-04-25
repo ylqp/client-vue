@@ -27,7 +27,7 @@
                 </div>
                 <div class="message-title-text">{{msgItem.type === 'default'?'告知':titleMap[msgItem.type]}}</div>
               </div>
-              <div class="message-close-btn">
+              <div class="message-close-btn" v-if="!msgItem.autoClose">
                 <i class="el-icon-close" @click="removeMessage(mIndex)"></i>
               </div>
             </div>
