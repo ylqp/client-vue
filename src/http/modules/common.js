@@ -8,6 +8,8 @@ import {
     CheckStartAnswerPaper,
     StartAnswerPaperWithPhoto,
     StartAnswerPaper,
+    TempSaveAnswerPaper,
+    SubmitAnswerPaper
 } from '../api'
 
 // 获取租户
@@ -35,7 +37,7 @@ export const getExamListByTypeIdAndCoursecode = (data) => {
     return request(QueryStudentArrangementListByTypeIdAndCoursecode, data)
 }
 
-// 检查开始考试
+// 检查开始考试 (这个接口会更新考试数据功能 不然数据只是在缓存中)
 export const ifStartExam = (data) => {
     return request(CheckStartAnswerPaper, data)
 }
@@ -44,4 +46,14 @@ export const ifStartExam = (data) => {
 export const getExam = (isFace, data) => {
     let interfaceUrl = isFace === 1 ? StartAnswerPaperWithPhoto : StartAnswerPaper
     return request(interfaceUrl, data)
+}
+
+// 临时保存
+export const tempSave = (data) => {
+    return request(TempSaveAnswerPaper, data)
+}
+
+// 提交试卷
+export const submitExam = (data) => {
+    return request(SubmitAnswerPaper, data)
 }

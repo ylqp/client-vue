@@ -1,8 +1,8 @@
 <template>
   <div class="blank-content">
       <div v-for="(el, index) in inputAreaList" :key="el.id">
-        <el-input v-model="el.content" v-if='!isEditor'>
-          <i slot="prefix" class="inputNum">{{index+1}}</i>
+        <el-input class="mt20" v-model="el.content" v-if='!isEditor' @blur="blankFn">
+          <i slot="prefix" class="inputNum">{{`${index+1}:`}}</i>
         </el-input>
         <!-- <Editor :isBlank='isEditor' :contentObj="el" v-else/> -->
         <vue-ueditor-wrap v-model="el.content" :config="editorConfig" v-else></vue-ueditor-wrap>
@@ -55,12 +55,32 @@ export default {
         })
       }
       this.inputAreaList = tempInputList
+    },
+    blankFn () {
+      let answerList = []
+      let doneList = this.inputAreaList.filter(item => item.content)
+      if (doneList.length) {
+          doneList.forEach(item => {
+              answerList.push({
+                id: item.id,
+                content: item.content
+              })
+          })
+          this.question.webData.answer = answerList
+          this.question.webData.isAnswer = true
+      } else {
+          this.question.webData.answer = answerList
+          this.question.webData.isAnswer = false
+      }
     }
-  }
+  },
+  
 }
 </script>
 <style scoped>
-.inputNum {
-  /* vertical-align: mi; */
+.el-input__prefix {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

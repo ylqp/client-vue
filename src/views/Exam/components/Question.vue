@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div :class="queItem.answerMode === 'Composite'? 'question-Composite' : ''">
         <div class="queStem">
-            <span class="mr5 fl">{{queItem.usedsequence + '.'}}</span>
+            <span class="mr5 fl">{{queItem.sequence + '.'}}</span>
             <span v-html="queItem.stem"></span>
         </div>
         <div class="quetionContent mt30">
@@ -14,6 +14,10 @@
             />
             <BlankFilling v-if="queItem.answerMode === 'BlankFilling'" :question="queItem" />
             <EssayQuestion v-if="queItem.answerMode === 'EssayQuestion'" :question="queItem"/>
+            <template v-if="queItem.answerMode === 'Composite'">
+                <Question  v-for="subItem in queItem.subqustionList" :key="subItem" :queItem="subItem" />
+            </template>
+            
         </div>
     </div>
 </template>
@@ -47,6 +51,13 @@ export default {
     created () {
         console.log(this.queItem)
         this.text = JSON.stringify(this.queItem)
+    },
+    watch: {
+        queItem: {
+            handler () {
+                console.log(this.queItem)
+            }
+        }
     }
 }
 </script>
@@ -60,5 +71,8 @@ export default {
     font-weight: 500;
     line-height: 30px;
     
+}
+.question-Composite {
+    display: flex;
 }
 </style>

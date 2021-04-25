@@ -18,4 +18,8 @@ export const CheckStartAnswerPaper = 'CheckStartAnswerPaper'
 export const StartAnswerPaperWithPhoto = 'StartAnswerPaperWithPhoto'
 // 开始考试接口(不拍照)
 export const StartAnswerPaper = 'StartAnswerPaper'
+// 临时保存
+export const TempSaveAnswerPaper = 'TempSaveAnswerPaper'
+// 提交试卷
+export const SubmitAnswerPaper = 'SubmitAnswerPaper'
 

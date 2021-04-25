@@ -58,7 +58,7 @@
                         </el-scrollbar>
                     </div>
                     <div class="submitBox">
-                        <div class="submitBtn">
+                        <div class="submitBtn" @click="submitExamFn">
                             <i class="iconfont icon-tijiao"></i>
                             <span class="ml10">交卷</span>
                         </div>
@@ -71,7 +71,8 @@
 </template>
 <script>
 import Question from './components/Question'
-import { getExam } from '@/http/modules/common'
+import { getExam, submitExam, tempSave, ifStartExam } from '@/http/modules/common'
+import { dealQueItemAnswer, mountQueItemAnswer} from '@/help/Exam/index'
 export default {
     name: 'Exam',
     components: {
@@ -102,6 +103,14 @@ export default {
     },
     methods: {
         async getExamInfo () {
+            // 判断可否考试
+            let params = {
+                isFaceTest: this.$route.query.isFace,
+                arrangementId: this.$route.query.eid
+            }
+            const { cdata } = await ifStartExam(params)
+            console.log(cdata)
+
             const { data } = await getExam(this.$route.query.isFace, {arrangementId: this.$route.query.eid})
             let examInfo = JSON.parse(data)
             console.log(examInfo)
@@ -122,7 +131,7 @@ export default {
                 // 学生考试活动成绩id
                 studentTestActivityScoreId,
                 // 临时保存信息
-                tempSaveAnswerExpire
+                // tempSaveAnswerExpire
             }
             // console.log(this.initialParam)
             /**
@@ -160,7 +169,7 @@ export default {
                         questionItem.webData.isAnswer = false
                     }
                     // 初始挂载答案
-                    // questionItem = mountQueItemAnswer(questionItem)
+                    questionItem = mountQueItemAnswer(questionItem)
 
                     this.questionList.push(questionItem)
                     this.currentQue = this.questionList[this.currentIndex]
@@ -186,6 +195,53 @@ export default {
                     this.currentIndex = index
                 }
             })
+        },
+        async submitExamFn () {
+            // 提交考试的参数
+            const params = this.getSubmitParams(0)
+            console.log(params)
+            // const { data } = await submitExam(params)
+
+            // 临时保存参数
+            const oInterParam = {
+                arrangementId: params.arrangementId,
+                answerPaperRecordId: params.answerPaperRecordId,
+                paperAnswerResult: params.paperAnswerResult,
+                tempSaveAnswerExpire: params.tempSaveAnswerExpire
+            }
+            const { data } = await tempSave (params)
+            let rdata = JSON.parse(data)
+            console.log(rdata)
+        },
+        /**
+         * 获取考试答案
+         */
+        getSubmitParams (temp) {
+            let questionAnswerList = []
+            // 获取试题答案列表
+            this.questionBack.forEach(item => {
+                item.paperQuestionList.forEach(item => {
+                    const answerItem = dealQueItemAnswer(item)
+                    questionAnswerList.push(answerItem)
+                })
+            })
+
+            questionAnswerList = questionAnswerList.filter(item => item && JSON.stringify(item) !== '{}')
+
+            let paperAnswerResult = {
+                answerPaperRecordId: this.initialParam.answerPaperRecordId,
+                questionAnswerList: questionAnswerList
+            }
+            let params = {
+                // 从start接口获取的参数
+                ...this.initialParam,
+                // 保存还是提交
+                temp,
+                sourceIp: '',
+                // 试题答案
+                paperAnswerResult: JSON.stringify(paperAnswerResult)
+            }
+            return params
         }
     },
     watch: {

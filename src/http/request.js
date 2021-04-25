@@ -12,8 +12,9 @@ const request = async (code, data) => {
       cdata = JSON.stringify(data)
     }
     return new Promise((resolve, reject) => {
-        window.OTS[SENT](code, null, cdata, function (data) {
-            let res = JSON.parse(data)
+        window.OTS[SENT](code, null, cdata, function (rdata) {
+            
+            let res = JSON.parse(rdata)
             let { status } = res
             if (status === 1) {
               resolve(res)

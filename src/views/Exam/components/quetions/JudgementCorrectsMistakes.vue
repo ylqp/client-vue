@@ -2,17 +2,17 @@
   <div>
       <div class="judgeCorrect-content">
         <div 
-          v-for="item in optionList" 
+          v-for="item in question.answerArea.optionList" 
           :key="item.id"
           class="judgeOption"
-          :class="answer === item.id ? 'chosen' : ''"
+          :class="question.webData.answer.id === item.id ? 'chosen' : ''"
           @click="chooseOption(item.id)"
         >
           <i class="iconfont" :class="item.webContent==='正确' ? 'icon-dui' : 'icon-cuo'"></i>
           {{item.webContent}}
         </div>
-        <div class="correctBox" v-show="isCorrect">
-          <el-input v-model="correctContent" @change="dealJCAnswer"></el-input>
+        <div class="correctBox" v-show="question.webData.isCorrect">
+          <el-input v-model="question.webData.answer.content" @change="dealJCAnswer"></el-input>
         </div>
     </div>
   </div>
@@ -23,10 +23,7 @@ export default {
   props: ['question'],
   data () {
     return {
-      answer: '',
-      // 改错内容
-      correctContent: '222',
-      optionList: []
+      
     }
   },
   computed: {
@@ -42,25 +39,21 @@ export default {
       }
     }
   },
-  created () {
-    this.initialOption()
-  },
   methods: {
-    initialOption () {
+    chooseOption (optionId) {
+      this.question.webData.answer.id = optionId
+      // return
+      //触发改错框
+
       let options = this.question.answerArea.optionList
-      options.forEach(item => {
-        if (item.content === '对' || item.content === '正确' || item.content === 'T') {
-          item.webContent = '正确'
-        }
-        if (item.content === '错' || item.content === '错误' || item.content === 'F') {
-          item.webContent = '错误'
-        }
-      })
-      this.optionList = options
-    },
-    chooseOption (id) {
-      this.answer = id
-      this.dealJCAnswer()
+      let answerOption = options.filter(item => item.id == optionId)
+      if (answerOption[0].webContent == '错误') {
+        this.question.webData.isCorrect = true
+      } else {
+        this.question.webData.isCorrect = false
+      }
+
+			this.dealJCAnswer()
     },
     /**
      * 处理多选题答案
@@ -68,12 +61,14 @@ export default {
      */
     dealJCAnswer () {
       let answerData = {}
-      answerData.id = this.answer
-      if (this.isCorrect) { // 不需要改错
-        answerData.content = this.correctContent
-      }
-      this.question.webData.answer = answerData
-      this.question.webData.isAnswer = true
+		  answerData.id = this.question.webData.answer.id
+		  if (this.question.webData.isCorrect) {
+		    answerData.content = this.question.webData.answer.content
+		  } else {
+		    answerData.content = ''
+		  }
+		  this.question.webData.answer = answerData
+		  this.question.webData.isAnswer = true
     }
   }
 }

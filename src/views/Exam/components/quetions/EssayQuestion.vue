@@ -21,7 +21,16 @@ export default {
   created () {
     this.editorConfig = getEditorConfig('EssayQuestion')
   },
+  methods: {
+    initialEditor () {
+      this.content = this.question.webData.answer
+    }
+  },
   watch: {
+    question: {
+      handler: 'initialEditor',
+      immediate: true
+    },
     content: {
       handler (newContent, oldContent) {
         this.question.webData.answer = newContent

@@ -17,4 +17,9 @@
       width: 110%;
       height: 120%; */
   }
+  .el-input__prefix {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 </style>
