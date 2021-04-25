@@ -6,7 +6,12 @@
           v-for="(msgItem,mIndex) in otsMessageList"
           :key="msgItem.mIndex"
         >
-          <div class="left-border"></div>
+          <div
+            class="left-border"
+            :class="[
+              `left-border-${msgItem.type}`
+            ]"
+          ></div>
           <div class="message-content">
             <div class="message-title-content">
               <div class="message-title">
@@ -61,7 +66,7 @@
           mId
         })
         this.otsMessageList.push(messageItem)
-        messageItem.autoClose && this.aotoRemoveMessage(mId, messageItem.duration)
+        messageItem.autoClose && this.autoRemoveMessage(mId, messageItem.duration)
       },
       getMId () {
         if (!this.mId) {
@@ -70,7 +75,7 @@
         this.mId++;
         return `mId${this.mId}`;
       },
-      aotoRemoveMessage (mId,duration) {
+      autoRemoveMessage (mId,duration) {
         setTimeout(() => {
           let mIndex = this.otsMessageList.findIndex(item => item.mId === mId);
           this.removeMessage(mIndex)
@@ -98,11 +103,23 @@
     border-radius: 5px;
     display: flex;
     margin-bottom: 20px;
+    transition: opacity .2s transform .4s;
     .left-border {
       width: 8px;
-      background: #198CFF;
       border-top-left-radius: 5px;
       border-bottom-left-radius: 5px;
+    }
+    .left-border.left-border-success {
+      background: #15AD31;
+    }
+    .left-border.left-border-default {
+      background: #198CFF;
+    }
+    .left-border.left-border-error {
+      background: #F44A4A;
+    }
+    .left-border.left-border-warning {
+      background: #FFBA00;
     }
   }
   .message-content {

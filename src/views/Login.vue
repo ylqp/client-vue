@@ -73,7 +73,7 @@ export default {
     ...mapActions('examType', ['geExamTypeList']),
     async loginIn () {
       this.$otsMessage({
-        content : '测试message'
+        content : '测试message',
       })
       return
       // 1. 表单验证
