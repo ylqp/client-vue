@@ -103,7 +103,6 @@
     border-radius: 5px;
     display: flex;
     margin-bottom: 20px;
-    transition: opacity .2s transform .4s;
     .left-border {
       width: 8px;
       border-top-left-radius: 5px;
