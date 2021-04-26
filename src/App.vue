@@ -1,9 +1,18 @@
 <template>
   <div id="app">
     <router-view />
+    <Shurufa class="shurufa"/>
   </div>
 </template>
-
+<script>
+import Shurufa from './components/Shurufa.vue'
+export default {
+  name: 'app',
+  components: {
+    Shurufa
+  }
+}
+</script>
 <style>
   body,html,#app {
     height: 100%;
@@ -22,5 +31,9 @@
     justify-content: center;
     align-items: center;
   }
-  
+  .shurufa {
+    position: fixed;
+    bottom: 0;
+    right: 30px;
+  }
 </style>

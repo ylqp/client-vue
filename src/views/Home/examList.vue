@@ -2,7 +2,7 @@
   <div>
       <TopLine :name="examTypeInfo.activityTypeName" :isShowExit="isShowExit" />
       <TabsLine :tabList="tabs" :initId="initId" @changeStatus="changeStatus" />
-      <div class="mt20">
+      <div class="mt20 list-main">
         <div class="tableLine">
             <div class="tline thead">
                 <div class="item w30" title="活动名称">活动名称</div>
@@ -77,20 +77,31 @@ export default {
   },
   methods: {
     initHandler () {
-      // 响应topline名称
-      let self = this
-      self.examTypeList.forEach(item => {
-        if (item.id === self.$route.params.id) {
-          self.examTypeInfo = item
-          self.examListParams.activitytypeid = item.id
+
+      if (!this.$route.params.id) {
+        this.$router.push({
+          name: 'examList',
+          params: {
+            id: this.examTypeList[0].id
+          }
+        })
+      }
+
+      let examTypeId = this.$route.params.id
+
+      this.examTypeList.forEach(item => {
+        if (item.id === examTypeId) {
+          this.examTypeInfo = item
+          this.examListParams.activitytypeid = item.id
         }
       });
       //
-      self.examListParams.userId = self.userFPSettings.userId
+      this.examListParams.userId = this.userFPSettings.userId
       // 获取考试列表
-      self.getExamList()
+      this.getExamList()
     },
     async getExamList () {
+
       const { data } = await getExamListByTypeIdAndCoursecode(this.examListParams)
 
       let oData = JSON.parse(data)
@@ -212,5 +223,9 @@ export default {
     .btnItem.cxcj.gray{
       background: url('../../assets/images/cxcj_gray.png');
     }
+  }
+  .list-main {
+    height: calc(100% - 120px);
+    overflow: auto;
   }
 </style>

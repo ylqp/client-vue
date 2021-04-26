@@ -5,7 +5,7 @@
               <Nav />
             </el-aside>
             <el-main>
-                <router-view></router-view>
+                <router-view class="pageList"></router-view>
             </el-main>
         </el-container>
     </div>
@@ -28,5 +28,9 @@ export default {
   .el-main {
     background-color: rgba(250,251,252,1);
     color: #333;
+    padding-bottom: 34px;
+  }
+  .pageList {
+    height: 100%;
   }
 </style>
