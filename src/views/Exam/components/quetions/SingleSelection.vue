@@ -27,11 +27,16 @@ export default {
     },
     methods: {
         choiceOption (el) {
-            
+
             this.answer = el.id
 
             this.question.webData.answer = el.id
             this.question.webData.isAnswer = true
+
+            // 处理复合题isAnswer
+            if (this.question.webData.parQueId) {
+                this.$eventBus.$emit('dealCompositeIsAnswer', this.question.webData.parQueId)
+            }
 
         }
     },

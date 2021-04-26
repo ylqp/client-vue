@@ -64,6 +64,11 @@ export default {
                 this.question.webData.answer = ''
                 this.question.webData.isAnswer = false
             } 
+
+            // 处理复合题isAnswer
+            if (this.question.webData.parQueId) {
+                this.$eventBus.$emit('dealCompositeIsAnswer', this.question.webData.parQueId)
+            }
         }
     },
     watch: {

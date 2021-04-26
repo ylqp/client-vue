@@ -1,11 +1,11 @@
 <template>
     <div class="exam-page">
         <div class="top">
-            <div class="title f22">{{arrangementName}}</div>
+            <div class="title f22">{{pageData.title}}</div>
             <div class="exit">
                 <div class="exitBtn">
                     <i class="iconfont icon-exit02 f14"></i>
-                    <span class="ml5">退出考试</span>
+                    <span class="ml5" @click="goExamList">退出考试</span>
                 </div>
             </div>
         </div>
@@ -25,14 +25,14 @@
             <div class="right">
                 <div id="cameraArea" class="camArea" v-if="isShowCamera"></div>
                 <div class="tika">
-                    <div class="time">
+                    <div class="time" v-if="isShowTime">
                         <img src="@/assets/images/time.png" class="mr5" />
-                        <span>00:00</span>
+                        <span>{{pageData.countDownTime}}</span>
                     </div>
                     <div class="tishu">
                         <img src="@/assets/images/tika.png" class="mr5" />
-                        <span class="col_green">1</span>
-                        <span class="col_grayZ">/2</span>
+                        <span class="col_green">{{doneQues.length}}</span>
+                        <span class="col_grayZ">/{{questionList.length}}</span>
                         <span class="col_grayQ ml5">题</span>
                     </div>
                     <div class="timu">
@@ -72,7 +72,7 @@
 <script>
 import Question from './components/Question'
 import { getExam, submitExam, tempSave, ifStartExam } from '@/http/modules/common'
-import { dealQueItemAnswer, mountQueItemAnswer} from '@/help/Exam/index'
+import { dealQueItemAnswer, mountQueItemAnswer, copyPageData } from '@/help/Exam/index'
 export default {
     name: 'Exam',
     components: {
@@ -82,6 +82,7 @@ export default {
         return {
             text: 1,
             isShowCamera: false,
+            isShowTime: true,
             // 活动名称
             arrangementName: '',
             // 原始试题包
@@ -91,19 +92,45 @@ export default {
             // 当前试题
             currentQue: {},
             // 当前index
-            currentIndex: 0,
+            currentIndex: -1,
             isCanNext: true,
             // 从开始接口获取到 ===> 需要传回submit的参数
             initialParam: {},
+            // 页面用的数据
+            pageData: {
+                // 倒计时定时器
+		        countDownTimer: null,
+                countDownTime: ""
+            }
+        }
+    },
+    computed: {
+        doneQues () {
+            return this.questionList.filter(item => item.webData.isAnswer)
         }
     },
     created () {
         console.log(this.$route.query)
         this.getExamInfo()
     },
+    mounted () {
+        // 处理复合题isAnswer
+        this.$eventBus.$on('dealCompositeIsAnswer', (qid) => {
+
+            let queItem = this.questionList.filter(item => item.questionId === qid)[0]
+
+			queItem.webData.isAnswer = queItem.subqustionList.every(function (item, index) {
+		    	// console.log(index + '---------' + item.webData.isAnswer)
+		    	return item.webData.isAnswer
+		    })
+        })
+    },
     methods: {
+        /**
+         * 处理开始考试接口
+         */
         async getExamInfo () {
-            // 判断可否考试
+            // 判断可否考试（删）
             let params = {
                 isFaceTest: this.$route.query.isFace,
                 arrangementId: this.$route.query.eid
@@ -113,12 +140,19 @@ export default {
 
             const { data } = await getExam(this.$route.query.isFace, {arrangementId: this.$route.query.eid})
             let examInfo = JSON.parse(data)
-            console.log(examInfo)
+            
             /**
              * 考试基本信息=> 页面需要
              */
-            let { arrangementName } = examInfo
-            this.arrangementName = arrangementName
+            var options = copyPageData(examInfo)
+            this.pageData = Object.assign(this.pageData, options)
+            
+            // let { arrangementName } = examInfo
+            // this.arrangementName = arrangementName
+            /**
+             * 考试配置项处理
+             */
+            this.dealExamOptions(this.pageData)
             /**
              * 考试基本信息=> 提交参数
              */
@@ -162,6 +196,7 @@ export default {
                                 subQueItem.webData = {}
                                 subQueItem.webData.answer = ''
                                 subQueItem.webData.isAnswer = false
+                                subQueItem.webData.parQueId = questionItem.questionId
                             })
                         }
                         questionItem.webData = {}
@@ -171,18 +206,23 @@ export default {
                     // 初始挂载答案
                     questionItem = mountQueItemAnswer(questionItem)
 
+                    
                     this.questionList.push(questionItem)
-                    this.currentQue = this.questionList[this.currentIndex]
                 })
-            });
+            })
 
             // 赋值给
             this.questionBack = questionBack
-
+            // 展示第一道题
+            this.currentIndex = 0
             console.log(this.questionList)
             
         },
+        /**
+         * 处理下一道题
+         */
         getNextQue () {
+            
             if (!this.isCanNext) {
                 this.$message('已经是最后一题啦~')
                 return
@@ -200,16 +240,17 @@ export default {
             // 提交考试的参数
             const params = this.getSubmitParams(0)
             console.log(params)
-            // const { data } = await submitExam(params)
+            const { data } = await submitExam(params)
 
             // 临时保存参数
-            const oInterParam = {
-                arrangementId: params.arrangementId,
-                answerPaperRecordId: params.answerPaperRecordId,
-                paperAnswerResult: params.paperAnswerResult,
-                tempSaveAnswerExpire: params.tempSaveAnswerExpire
-            }
-            const { data } = await tempSave (params)
+            // const oInterParam = {
+            //     arrangementId: params.arrangementId,
+            //     answerPaperRecordId: params.answerPaperRecordId,
+            //     paperAnswerResult: params.paperAnswerResult,
+            //     tempSaveAnswerExpire: params.tempSaveAnswerExpire
+            // }
+            // const { data } = await tempSave (params)
+
             let rdata = JSON.parse(data)
             console.log(rdata)
         },
@@ -242,16 +283,65 @@ export default {
                 paperAnswerResult: JSON.stringify(paperAnswerResult)
             }
             return params
+        },
+        /**
+         * 处理考试设置项
+         */
+        dealExamOptions (obj) {
+            this.dealCountdown ()
+        },
+        /**
+         * 处理倒计时
+         */
+        dealCountdown () {
+			if (this.pageData.timeLimitEnabled && this.pageData.paperTime > 0) {
+				this.Univertimer(this.pageData.paperTime * 60 - this.pageData.useTime);
+			} else {
+				console.log('不需要倒计时');
+				this.isShowTime = true;
+			}
+		},
+        Univertimer (intDiff) {
+
+            this.pageData.countDownTimer = setInterval(mytimer, 1000);
+            let that = this
+            function mytimer() {
+                var minute = 0,
+                    second = 0; //时间默认值        
+                if (intDiff > 0) {
+                    minute = Math.floor(intDiff / 60);
+                    second = Math.floor(intDiff) - (minute * 60);
+                }
+                if (minute <= 9) minute = '0' + minute;
+                if (second <= 9) second = '0' + second;
+                // $('.sDate').html(minute + ':' + second);
+                that.pageData.countDownTime = minute + ':' + second;
+                if (intDiff <= 0) {
+
+                	console.log('倒计时完成');
+                	clearInterval(that.pageData.countDownTimer);
+                    // 自动提交
+                	
+                }
+                intDiff--;
+            };
+        },
+        goExamList () {
+            this.$router.push({
+                name: 'examList'
+            })
         }
     },
     watch: {
-        currentIndex: function () {
-            if ((this.currentIndex + 1) >= this.questionList.length) {
-                this.isCanNext = false
-            } else {
-                this.isCanNext = true
+        currentIndex: {
+            handler: function () {
+                if ((this.currentIndex + 1) >= this.questionList.length) {
+                    this.isCanNext = false
+                } else {
+                    this.isCanNext = true
+                }
+                this.currentQue = this.questionList[this.currentIndex]
             }
-            this.currentQue = this.questionList[this.currentIndex]
         }
     }
 }

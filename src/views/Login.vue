@@ -75,7 +75,7 @@ export default {
       this.$otsMessage({
         content : '测试message',
       })
-      return
+      // return
       // 1. 表单验证
       await this.$refs.form.validate()
       // 2. 处理参数

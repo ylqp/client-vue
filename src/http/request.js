@@ -19,6 +19,7 @@ const request = async (code, data) => {
             if (status === 1) {
               resolve(res)
             } else {
+              console.log(res)
               window.WEBOTS.$message('接口报错了')
               reject(res)
             }

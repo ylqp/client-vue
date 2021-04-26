@@ -87,6 +87,7 @@ const mountAnswer_JudgementCorrectsMistakes = queItem => {
         }
         queItem.webData.isAnswer = true
     } else {
+        queItem.webData.answer = {}
     	queItem.webData.answer.id = ""
     	queItem.webData.answer.content = ""
     	queItem.webData.isCorrect = false
@@ -98,7 +99,17 @@ const mountAnswer_JudgementCorrectsMistakes = queItem => {
 }
 const mountAnswer_Composite = queItem => {
 
-    
+    if (queItem.subqustionList.length) {
+        queItem.subqustionList.forEach(subItem => {
+            const subAnswerItem = mountQueItemAnswer(subItem)
+        })
+    }
+
+    queItem.webData.isAnswer = queItem.subqustionList.every(function (item, index) {
+    	// console.log(index + '---------' + item.webData.isAnswer)
+    	return item.webData.isAnswer
+    })
+
     return queItem
 }
 

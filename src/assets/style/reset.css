@@ -1,14 +1,65 @@
-body,html,
-ul,h4
-{
+body, html, ul, h4 {
     margin: 0;
     padding: 0;
 }
-* {box-sizing: border-box;}
-body { 
+
+* {
+    box-sizing: border-box;
+}
+
+body {
     font-size: 12px;
     word-wrap: break-word;
     word-break: normal;
     white-space: normal;
- }
-ul li {list-style: none;}
+}
+
+ul li {
+    list-style: none;
+}
+
+/* 滚动条样式 */
+
+body::-webkit-scrollbar {
+    width: 5px;
+}
+
+body::-webkit-scrollbar-track {
+    background: #eee;
+    border-radius: 5px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 5px;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background: #c0c0c0;
+}
+
+body::-webkit-scrollbar-corner {
+    background: #179a16;
+}
+
+div::-webkit-scrollbar {
+    width: 5px;
+}
+
+div::-webkit-scrollbar-track {
+    background: #eee;
+    border-radius: 5px;
+}
+
+div::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 5px;
+}
+
+div::-webkit-scrollbar-thumb:hover {
+    background: #c0c0c0;
+}
+
+div::-webkit-scrollbar-corner {
+    background: #179a16;
+}
