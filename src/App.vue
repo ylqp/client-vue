@@ -10,6 +10,9 @@ export default {
   name: 'app',
   components: {
     Shurufa
+  },
+  methods: {
+    
   }
 }
 </script>
@@ -33,7 +36,7 @@ export default {
   }
   .shurufa {
     position: fixed;
-    bottom: 0;
-    right: 30px;
+    bottom: 2px;
+    right: 20px;
   }
 </style>
