@@ -16,7 +16,12 @@ class Loading {
   loading (code) {
     if (this.getCode(code)) {
       if (this.loadingCount === 0) {
-        this.loadingInstance = this.$eventBus.$loading()
+        this.loadingInstance = this.$eventBus.$loading({
+          lock: true,
+          text: '加载中...',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        })
       }
       this.loadingCount++
     }
