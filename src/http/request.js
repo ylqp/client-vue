@@ -5,13 +5,42 @@
  */
 import Vue from 'vue'
 const SENT = process.env.NODE_ENV === 'development' ? 'Sent_Post' : 'Sent'
-let loadingCount = 0
-const request = async (code, data) => {
-    const { $eventBus } = Vue.prototype
-    if (loadingCount === 0) {
-      $eventBus.$loading()
+
+class Loading {
+  constructor () {
+    this.loadingCount = 0
+    this.notLoading = ['GetPaymentResult']
+    this.$eventBus = Vue.prototype.$eventBus
+    this.loadingInstance = null
+  }
+  loading (code) {
+    if (this.getCode(code)) {
+      if (this.loadingCount === 0) {
+        this.loadingInstance = this.$eventBus.$loading()
+      }
+      this.loadingCount++
     }
-    loadingCount++
+  }
+  close (code) {
+    if (this.getCode(code)) {
+      this.loadingCount--
+      if (this.loadingCount === 0) {
+        this.loadingInstance && this.loadingInstance.close()
+      }
+    }
+  }
+  getCode (code) {
+    return this.notLoading.indexOf(code) === -1 ? true : false
+  }
+}
+
+let $loading = null
+
+const request = async (code, data) => {
+    if ($loading === null) {
+      $loading = new Loading()
+    }
+    $loading.loading(code)
     let cdata = null
     if (data) {
       cdata = JSON.stringify(data)
@@ -20,10 +49,7 @@ const request = async (code, data) => {
         window.OTS[SENT](code, null, cdata, function (rdata) {
             let res = JSON.parse(rdata)
             let { status } = res
-            loadingCount--
-            if (loadingCount === 0) {
-              $eventBus.$loading().close()
-            }
+            $loading.close(code)
             if (status === 1) {
               resolve(res)
             } else {
