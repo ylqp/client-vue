@@ -72,7 +72,7 @@
 <script>
 import Question from './components/Question'
 import { getExam, submitExam, tempSave, ifStartExam } from '@/http/modules/common'
-import { dealQueItemAnswer, mountQueItemAnswer, copyPageData } from '@/help/Exam/index'
+import { dealQueItemAnswer, mountQueItemAnswer, copyPageData, getExamFlag } from '@/help/Exam/index'
 export default {
     name: 'Exam',
     components: {
@@ -140,7 +140,16 @@ export default {
 
             const { data } = await getExam(this.$route.query.isFace, {arrangementId: this.$route.query.eid})
             let examInfo = JSON.parse(data)
-            
+
+            // 验证是否可以正常考试
+            const examFlag = getExamFlag(examInfo.answerPaperFlag);
+            if (!examFlag.isAnswer) { // 提示信息
+                this.$message.error(examFlag.msg)
+                this.$router.push({
+                    name: 'examList'
+                })
+                return
+            }
             /**
              * 考试基本信息=> 页面需要
              */

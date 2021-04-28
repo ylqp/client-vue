@@ -9,7 +9,8 @@ import {
     StartAnswerPaperWithPhoto,
     StartAnswerPaper,
     TempSaveAnswerPaper,
-    SubmitAnswerPaper
+    SubmitAnswerPaper,
+    QueryAnswerPaperDetails
 } from '../api'
 
 // 获取租户
@@ -56,4 +57,9 @@ export const tempSave = (data) => {
 // 提交试卷
 export const submitExam = (data) => {
     return request(SubmitAnswerPaper, data)
+}
+
+// 试卷详情接口
+export const examDetail = (data) => {
+    return request(QueryAnswerPaperDetails, data)
 }

@@ -22,4 +22,20 @@ export const StartAnswerPaper = 'StartAnswerPaper'
 export const TempSaveAnswerPaper = 'TempSaveAnswerPaper'
 // 提交试卷
 export const SubmitAnswerPaper = 'SubmitAnswerPaper'
+// 详情页
+export const QueryAnswerPaperDetails = 'QueryAnswerPaperDetails'
+
+// 获取已支付列表
+export const QueryStudentPaymentBillByConditions = 'QueryStudentPaymentBillByConditions'
+// 获取待付费列表
+export const QueryStudentPaymentTestActivityByConditions = 'QueryStudentPaymentTestActivityByConditions'
+// 获取支付二维码
+export const GetPaymentQr = 'GetPaymentQr'
+// 获取支付结果
+export const GetPaymentResult = 'GetPaymentResult'
+
+// 消息中心相关
+
+// 获取消息列表
+export const OIMMessageList = 'OIMMessageList'
 

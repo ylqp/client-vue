@@ -80,6 +80,14 @@ const routes = [
     component: () => import('../views/Exam/EndExam.vue')
   },
   {
+    path: '/examdetail',
+    name: 'examDetail',
+    meta: {
+      title: '考试页'
+    },
+    component: () => import('../views/Detail/ExamDetail.vue')
+  },
+  {
     path: '*',
     name: '404',
     component: () => import('../views/ErrorPage.vue')

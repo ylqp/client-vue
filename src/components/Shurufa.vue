@@ -1,9 +1,11 @@
 <template>
-  <div>
-      
-      <div class="tipli" v-for="tip in tips" :key="tip" v-show="isShowTips">{{tip}}</div>
-      <div class="tipli" @mouseover="isShowTips = true" @mouseout="isShowTips = false">如何切换输入法？</div>
-  </div>
+    <div @mouseover="isShowTips = true" @mouseout="isShowTips = false">
+        <div class="tipli tipItem" v-for="tip in tips" :key="tip" v-show="isShowTips">{{tip}}</div>
+        <div class="tipli tipCon" >
+            <img src="@/assets/images/jianpan.png" alt="">
+            <span class="ml20">如何切换输入法？</span> 
+        </div>
+    </div>
 </template>
 <script>
 // import { getOsInfo } from '@/help/common'
@@ -29,7 +31,7 @@ export default {
                     '输入法切换：[win键+空格]',
                     '中英文切换：[shift] 或 [ctrl+空格]',
                 ]
-                
+
             } else {
                 
                 this.tips = [
@@ -83,12 +85,19 @@ export default {
     color: #fff;
     height: 30px;
     line-height: 30px;
-    padding: 0px 30px;
     font-size: 12px;
     background: #000;
     white-space: nowrap;
     border-top: 1px solid #c7c7c7;
     opacity: .7;
     cursor: pointer;
+}
+.tipli.tipItem:hover {
+    background: #535353;
+}
+.tipCon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 </style>
