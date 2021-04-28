@@ -45,7 +45,7 @@ export default {
             dialogVisible: false,
             imgSrc: '',
             payData: {
-
+                
             },
             resultTimer: null
         }

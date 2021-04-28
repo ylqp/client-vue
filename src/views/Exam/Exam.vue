@@ -98,6 +98,7 @@ export default {
             initialParam: {},
             // 页面用的数据
             pageData: {
+                title: '',
                 // 倒计时定时器
 		        countDownTimer: null,
                 countDownTime: ""
@@ -155,6 +156,7 @@ export default {
              */
             var options = copyPageData(examInfo)
             this.pageData = Object.assign(this.pageData, options)
+            console.log(this.pageData)
             
             // let { arrangementName } = examInfo
             // this.arrangementName = arrangementName

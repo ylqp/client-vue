@@ -1,13 +1,13 @@
 <template>
     <div class="exam-page">
         <div class="top">
-            <!-- <div class="title f22">{{pageData.title}}</div>
+            <div class="title f22">{{pageData.title}}</div>
             <div class="exit">
-                <div class="exitBtn">
+                <div class="exitBtn" @click="goExamList">
                     <i class="iconfont icon-exit02 f14"></i>
-                    <span class="ml5" @click="goExamList">退出考试</span>
+                    <span class="ml5">返回</span>
                 </div>
-            </div> -->
+            </div>
         </div>
         <div class="mainCon">
             <div class="left">
@@ -76,7 +76,8 @@ export default {
     data () {
         return {
             pageData: {
-
+                title: '',
+                aa: ''
             }
         }
     },
@@ -85,13 +86,32 @@ export default {
     },
     methods: {
         async getDetailInfo () {
+
             let params = {
                 answerPaperRecordId: '37a47882-95a1-49e2-999a-7e30f1840ac7'
             }
             const { data } = await examDetail(params)
-            console.log(JSON.parse(data) )
+            let detailInfo = JSON.parse(data)
+            
+            /**
+             * 详情基本信息=> 页面需要
+             */
+            let options = this.copyPageData(detailInfo)
+            this.pageData = Object.assign(this.pageData, options)
+            console.log(this.pageData)
+        },
+        copyPageData (obj) {
+            var newObj = {}
+            //考试标题 ==> 由后台配置用活动名称OR试卷名称
+            newObj.title = obj.title ? obj.title : ''
+
+            return newObj
+        },
+        goExamList () {
+            console.log(123)
         }
-    }
+    },
+
 }
 </script>
 <style lang="less" scoped>

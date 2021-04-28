@@ -23,7 +23,7 @@ export default {
     methods: {
         dealTips () {
             const version = this.judgeOS()
-            console.log(version)
+            
             if (version > 3) {
 
                 this.tips = [
