@@ -1,12 +1,26 @@
 <template>
-  <div>
+  <div class="logoBg">
       <el-card class="box-card">
-        <el-form ref="form" :model="form" label-width="80px" :rules="rules">
-          <el-form-item label="用户名" prop="userName">
-            <el-input clearable v-model="form.userName"></el-input>
+        <div class="schoolLogo">
+          <img src="" alt="">
+        </div>
+        <el-form ref="form" :model="form" :rules="rules">
+          <el-form-item prop="userName">
+            <el-input 
+              clearable 
+              v-model="form.userName" 
+              placeholder="请输入用户名" 
+              prefix-icon="iconfont icon-user"
+            ></el-input>
           </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <el-input clearable type="password" v-model="form.password"></el-input>
+          <el-form-item prop="password">
+            <el-input 
+              clearable 
+              type="password" 
+              v-model="form.password" 
+              placeholder="请输入密码"
+              prefix-icon="iconfont icon-pass"
+            ></el-input>
           </el-form-item>
           <el-form-item label="验证码" prop="checkCode" v-if="loginParams.needCheckCode">
             <div class="checkCodeBox">
@@ -15,7 +29,7 @@
             </div>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="loginIn"  @keyup.enter="loginIn">登录</el-button>
+            <div class="loginBtn"  @click="loginIn"  @keyup.enter="loginIn">登录</div>
           </el-form-item>
         </el-form>
       </el-card>
@@ -72,9 +86,9 @@ export default {
     ...mapActions('user', ['getUserFPSettings']),
     ...mapActions('examType', ['geExamTypeList']),
     async loginIn () {
-      this.$otsMessage({
-        content : '测试message',
-      })
+      // this.$otsMessage({
+      //   content : '测试message',
+      // })
       // return
       // 1. 表单验证
       await this.$refs.form.validate()
@@ -107,5 +121,51 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style lang="less" scoped>
+.logoBg {
+  background: url('../assets/images/loginbg.png');
+  background-size: 100% 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .box-card {
+    width: 380px;
+    .schoolLogo {
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      img {
+        width: 150px;
+        height: 50px;
+      }
+    }
+    .loginBtn {
+      width: 300px;
+      height: 50px;
+      background: linear-gradient(45deg,rgba(36,205,139,1) 0%,rgba(29,218,151,1) 100%);
+      border-radius: 4px;
+      margin: auto;
+      margin-top: 20px;
+      line-height: 50px;
+      font-size: 18px;
+      color: #FFF;
+      letter-spacing: 8px;
+      font-weight: bold;
+      text-align: center;
+      cursor: pointer;
+    }
+  }
+}
+.el-form-item {
+  display: flex;
+  justify-content: center;
+}
+.el-input /deep/ .el-input__inner{
+    width: 300px;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 25px;
+}
 </style>

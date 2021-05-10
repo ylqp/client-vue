@@ -39,4 +39,10 @@ export default {
     bottom: 2px;
     right: 20px;
   }
+  table {
+    margin: auto;
+  }
+  table td, table th{
+    text-align: center !important;
+  }
 </style>

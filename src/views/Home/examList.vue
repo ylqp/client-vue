@@ -22,7 +22,7 @@
                 <div class="item w15">
                   <div class="dealBtn">
                     <div class="btnItem ksks" @click="startExam(el)"></div>
-                    <div class="btnItem ml30 cxcj" :class="el.isCanDetail ? '' : 'gray'"></div>
+                    <div class="btnItem ml30 cxcj" :class="el.isCanDetail ? '' : 'gray'" @click="showDetails(el)"></div>
                   </div>
                 </div>
             </div>
@@ -33,6 +33,19 @@
           :total="total">
         </el-pagination>
       </div>
+      <el-dialog title="答题详情" :visible.sync="dialogTableVisible">
+        <el-table :data="detailList" max-height="600">
+          <el-table-column type="index" label="答卷次序" width="100" ></el-table-column>
+          <el-table-column property="starttime" label="答卷开始时间" width="200"></el-table-column>
+          <el-table-column property="submittime" label="交卷时间" width="200"></el-table-column>
+          <el-table-column property="score" label="答卷成绩" width="100"></el-table-column>
+          <el-table-column  label="操作" width="100">
+            <template slot-scope="scope">
+              <span class="cp" @click="goDetail(scope.row.id)">查看</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-dialog>
   </div>
 </template>
 <script>
@@ -66,6 +79,8 @@ export default {
       },
       examList: [],
       total: 0,
+      dialogTableVisible: false,
+      detailList: [],
     }
   },
   computed: {
@@ -176,6 +191,23 @@ export default {
       }
 
       console.log()
+    },
+    showDetails (el) {
+      if (!el.isCanDetail) {
+        this.$message('暂无答题详情')
+        return
+      }
+      this.dialogTableVisible = true
+      this.detailList = el.details
+      console.log(el.details)
+    },
+    goDetail (id) {
+      this.$router.push({
+        name: 'examDetail',
+        query: {
+          id
+        }
+      })
     },
     changeStatus (status) {
       this.examListParams.status = status

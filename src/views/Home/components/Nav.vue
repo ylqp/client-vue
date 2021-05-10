@@ -48,14 +48,14 @@
                     id: item.id,
                     takePhotoInTest: item.takePhotoInTest
                   }
-               })"
+                })"
           >
             <i class="iconfont" :class="index % 2 === 0 ? 'icon-zuoye' : 'icon-kaoshi' "></i>
             <p>{{item.activityTypeName}}</p>
           </div>
         </li>
       </ul>
-      <div class="logout">
+      <div class="logout" @click="goLogin">
         <span>注销</span>
       </div>
     </div>
@@ -88,6 +88,11 @@ export default {
         const { data } = await getExamType(param)
         let examInfo = JSON.parse(data)
         this.examTypes = examInfo.ActivityTypes
+      },
+      goLogin () {
+        this.$router.push({
+          name: 'Login'
+        })
       }
     },
     created () {
@@ -171,6 +176,7 @@ export default {
     color: #fff;
     display: flex;
     align-items: center;
+    padding: 12px 0;
   }
   .tabItem i {
     margin: 0 10px;
