@@ -58,6 +58,11 @@ const request = async (code, data) => {
             if (status === 1) {
               resolve(res)
             } else {
+              if (code === 'CheckCode' && status === 0) {
+                console.log(res)
+                resolve(res)
+                return
+              }
               console.log(res)
               window.WEBOTS.$message('接口报错了')
               reject(res)

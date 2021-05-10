@@ -2,12 +2,15 @@
   <div class="topLine">
       <span>{{name}}</span>
       <div v-show="isShowExit">
-          <i class="iconfont icon-exit fb f20 cp"></i>
+          <!-- <i class="iconfont icon-exit fb f20 cp"></i> -->
+          <close />
       </div>
   </div>
 </template>
 <script>
+import Close from '../../../components/Close.vue'
 export default {
+  components: { Close },
     name: 'TopLine',
     props: {
         name: {

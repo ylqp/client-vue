@@ -2,7 +2,7 @@
   <div class="logoBg">
       <el-card class="box-card">
         <div class="schoolLogo">
-          <img src="" alt="">
+          <img src="@/assets/images/logo1.png" alt="">
         </div>
         <el-form ref="form" :model="form" :rules="rules">
           <el-form-item prop="userName">
@@ -22,9 +22,15 @@
               prefix-icon="iconfont icon-pass"
             ></el-input>
           </el-form-item>
-          <el-form-item label="验证码" prop="checkCode" v-if="loginParams.needCheckCode">
+          <el-form-item prop="checkCode" v-if="needCheckCode">
             <div class="checkCodeBox">
-                <el-input clearable v-model="form.checkCode" class="checkCode"></el-input>
+                <el-input 
+                  clearable 
+                  v-model="form.checkCode" 
+                  class="checkCode" 
+                  placeholder="验证码"
+                  prefix-icon="iconfont icon-check"
+                ></el-input>
                 <img :src= "checkCodeImg" @click="handleCheckCode"/>
             </div>
           </el-form-item>
@@ -32,13 +38,15 @@
             <div class="loginBtn"  @click="loginIn"  @keyup.enter="loginIn">登录</div>
           </el-form-item>
         </el-form>
+        <close class="closeCom" />
       </el-card>
   </div>
 </template>
 <script>
-import { login } from '@/http/modules/login'
+import { login, getCheckCode } from '@/http/modules/login'
 import { getTenate } from '@/http/modules/common'
 import { mapActions, mapState } from 'vuex'
+import Close from '@/components/Close.vue'
 const loginStatus = {
     'needCheckCode': '需要验证码',
     'checkCodeError': '验证码错误',
@@ -53,9 +61,14 @@ const loginStatus = {
 }
 export default {
   name: 'Login',
+  components: {
+    Close
+  },
   data () {
     return {
       checkCodeImg: '',
+      // 需要验证码
+      needCheckCode: false,
       loginParams: {
         name: "",
         pass: "",
@@ -110,7 +123,23 @@ export default {
             id: this.examTypeList[0].id
           }
         })
+      } else {
+        // 处理错误
+        this.handleFalse(data.reason)
       }
+    },
+    handleFalse (reason) {
+      let loginStatus = this.getLoginStatus(reason)
+      if (reason === 'needCheckCode') {
+          this.handleCheckCode()
+      }
+      this.$message.error(loginStatus)
+    },
+    async handleCheckCode () {
+      this.needCheckCode = true
+      const { data } = await getCheckCode()
+      // 刷新最新验证码
+      this.checkCodeImg = 'data:image/png;base64,' + data
     },
     getLoginStatus (reason) {
       return loginStatus[reason] || '登录失败，请联系管理员'
@@ -130,6 +159,7 @@ export default {
   justify-content: center;
   align-items: center;
   .box-card {
+    position: relative;
     width: 380px;
     .schoolLogo {
       height: 100px;
@@ -167,5 +197,21 @@ export default {
     height: 50px;
     line-height: 50px;
     border-radius: 25px;
+}
+.checkCodeBox {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  .checkCode /deep/ .el-input__inner {
+    width: 180px;
+  }
+  img {
+    width: 120px;
+  }
+}
+.closeCom {
+  position: absolute;
+  right: 20px;
+  top: 20px;
 }
 </style>
