@@ -13,6 +13,27 @@
         <span class="state"></span>
         <span>在线</span>
       </div>
+      <div class="userinfoBox">
+        <div class="userImg">
+          <img :src="userInfo.userFaceImageUrl" alt="">
+        </div>
+        <div class="userCon">
+          <div>
+            <div class="col_grayQ f12">
+              <i class="iconfont icon-user f12"></i>
+              <span class="ml5">姓名</span>
+            </div>
+            <p class="col_black f14 mt10">{{userInfo.realName}}</p>
+          </div>
+          <div class="mt20">
+            <div class="col_grayQ f12">
+              <i class="iconfont icon-cred f12"></i>
+              <span class="ml5">身份证</span>
+            </div>
+            <p class="col_black f14 mt10">{{userInfo.certificateCode ? userInfo.certificateCode : '未填写'}}</p>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="tab-container">
       <ul>
@@ -90,8 +111,14 @@ export default {
         this.examTypes = examInfo.ActivityTypes
       },
       goLogin () {
-        this.$router.push({
-          name: 'Login'
+        this.$otsPop({
+          content: '确实要退出到登录页面？',
+          icon: 'camera',
+          success: () => {
+            this.$router.push({
+              name: 'Login'
+            })
+          }
         })
       }
     },
@@ -111,7 +138,7 @@ export default {
   }
   .nav-container {
     height: 100%;
-    background: linear-gradient(45deg,rgba(0,103,255,1) 0%,rgba(38,146,255,1) 100%);;
+    background: linear-gradient(45deg,rgba(0,103,255,1) 0%,rgba(38,146,255,1) 100%);
   }
   .ots-logo-container {
     height: 60px;
@@ -128,12 +155,57 @@ export default {
     flex-direction: column;
     align-items: center;
     color: #fff;
+    .userinfoBox {
+      position: fixed;
+      left: 110px;
+      top: 90px;
+      width: 315px;
+      height: 170px;
+      background: rgba(255,255,255,1);
+      z-index: 10;
+      box-shadow: 0px 6px 30px 0px rgb(39 46 64 / 30%);
+      padding: 20px;
+      border-radius: 3px;
+      display: none;
+      .userImg{
+        width: 95px;
+        height: 128px;
+        margin-right: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img {
+          max-height: 100%;
+          max-width: 100%;
+        }
+      }
+      .userCon {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+    }
+    .userinfoBox:after{
+      content: "";
+      display: block;
+      position: absolute;
+      left:-16px;
+      top:25px;
+      width: 0;
+      height: 0;
+      border: 8px solid #fff;
+      border-color: transparent #fff transparent transparent;
+    }
+  }
+  .userinfo-container:hover .userinfoBox {
+    display: flex;
   }
   .userinfo-container .avatar {
     width: 62px;
     height: 62px;
     margin-top: 32px;
   }
+  
   .userinfo-container .avatar img {
     width: 100%;
     height: 100%;

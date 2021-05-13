@@ -13,10 +13,10 @@
 <script>
 import Nav from './Nav.vue'
 export default {
-  name: 'HomeLayout',
-  components: {
-      Nav
-  }
+    name: 'HomeLayout',
+    components: {
+        Nav
+    }
 }
 </script>
 <style scoped>
