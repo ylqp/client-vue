@@ -90,6 +90,9 @@ export default {
             this.$emit('closePay')
         }
     },
+    beforeDestroy () {
+        console.log('des')
+    },
     watch: {
         // ids
     }

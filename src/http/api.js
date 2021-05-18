@@ -1,6 +1,7 @@
 // 关闭程序接口
 export const APPCLOSE = 'APPCLOSE'
-
+// 获取菜单项
+export const MenuFunction = 'MenuFunction'
 // 获取学习logo
 export const GetSchoolLogo = 'GetSchoolLogo'
 // 获取租户名
@@ -29,6 +30,8 @@ export const TempSaveAnswerPaper = 'TempSaveAnswerPaper'
 export const SubmitAnswerPaper = 'SubmitAnswerPaper'
 // 详情页
 export const QueryAnswerPaperDetails = 'QueryAnswerPaperDetails'
+// 获取考试须知
+export const GetPreExamNote = 'GetPreExamNote'
 
 // 获取已支付列表
 export const QueryStudentPaymentBillByConditions = 'QueryStudentPaymentBillByConditions'
@@ -43,4 +46,14 @@ export const GetPaymentResult = 'GetPaymentResult'
 
 // 获取消息列表
 export const OIMMessageList = 'OIMMessageList'
+
+
+
+// 照片上传相关
+
+// 获取照片上传二维码
+export const OtsClientCreateUploadID = 'OtsClientCreateUploadID'
+// 获取已经上传的图片
+export const OtsClientGetFileUrl = 'OtsClientGetFileUrl'
+
 

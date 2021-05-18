@@ -1,7 +1,7 @@
 <template>
   <div>
       <TopLine :name="examTypeInfo.activityTypeName" :isShowExit="isShowExit" />
-      <TabsLine :tabList="tabs" :initId="initId" @changeStatus="changeStatus" />
+      <TabsLine :tabList="tabs" :initId="initId" :searchFn="searchExamList" @changeStatus="changeStatus" />
       <div class="mt20 list-main">
         <div class="tableLine">
             <div class="tline thead">
@@ -46,6 +46,8 @@
           </el-table-column>
         </el-table>
       </el-dialog>
+      <!-- 考试须知 -->
+      <exam-note v-if="isShowNote" @cancel="isShowNote = false" :currentExamInfo="currentExamInfo" />
   </div>
 </template>
 <script>
@@ -54,14 +56,18 @@ import { mapState } from 'vuex'
 import TopLine from './components/TopLine'
 import TabsLine from './components/TabsLine'
 import { getStateRouter } from '@/help/HomeGoExam'
+import ExamNote from '../../components/ExamNote.vue'
 export default {
   name: 'ExamList',
   components: {
     TopLine,
-    TabsLine
+    TabsLine,
+    ExamNote
   },
   data () {
     return {
+      isShowNote: false,
+      currentExamInfo: null,
       topLineName: '',
       tabs: [{id: 3, name: '进行中'}, {id: 2, name: '未开始'}, {id: 4, name: '已结束'}],
       initId: 3,
@@ -115,6 +121,10 @@ export default {
       // 获取考试列表
       this.getExamList()
     },
+    searchExamList (val) {
+      this.examListParams.fulltext = val
+      this.getExamList()
+    },
     async getExamList () {
 
       const { data } = await getExamListByTypeIdAndCoursecode(this.examListParams)
@@ -145,6 +155,10 @@ export default {
       this.total = oData.total
       console.log(examList)
     },
+    showPreNote (el) {
+        this.isShowNote = true
+        this.currentExamInfo = el
+    },
     async startExam (examObj) {
 
       // 判断可否考试
@@ -154,43 +168,36 @@ export default {
       }
       const { data } = await ifStartExam(params)
       console.log(data)
+      
       if (data.state === 0) {
 
-        let routePath = getStateRouter(data.goWhere);
-        this.$router.push({
-            name: 'checkExam',
-            params: {
-              isFace: this.examTypeInfo.takePhotoInTest,
-              eid: examObj.testactivityarrangementid
-            }
-        })
-        if (!routePath) {
+          let routePath = getStateRouter(data.goWhere);
+          if (!routePath) {
+            this.$alert(data.message, '提示', {
+              type: 'warning',
+              callback: action => {
+              }
+            });
+          } else {
+              // 跳转放在考试须知里====同意即跳转
+
+              let infoObj = {
+                eid: examObj.testactivityarrangementid,
+                isFace: params.isFaceTest,
+                routePath: routePath
+              }
+              this.showPreNote(infoObj)
+          }
+
+      } else if (data.state === 1) { // 不用跳转 只提示
           this.$alert(data.message, '提示', {
             type: 'warning',
             callback: action => {
             }
           });
-        } else {
-          this.$router.push({
-            name: 'checkExam',
-            params: {
-              isFace: this.examTypeInfo.takePhotoInTest,
-              eid: examObj.testactivityarrangementid
-            }
-          })
-        }
-
-      } else if (data.state === 1) { // 不用跳转 只提示
-        this.$alert(data.message, '提示', {
-          type: 'warning',
-          callback: action => {
-          }
-        });
-      } else if (data.state === 2) {
+      } else if (data.state === 2) { // 先提示 再转跳
 
       }
-
-      console.log()
     },
     showDetails (el) {
       if (!el.isCanDetail) {

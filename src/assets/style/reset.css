@@ -12,6 +12,7 @@ body {
     word-wrap: break-word;
     word-break: normal;
     white-space: normal;
+    font-family: 'Microsoft YaHei'
 }
 
 ul li {

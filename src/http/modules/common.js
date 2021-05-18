@@ -10,9 +10,15 @@ import {
     StartAnswerPaper,
     TempSaveAnswerPaper,
     SubmitAnswerPaper,
-    QueryAnswerPaperDetails
+    QueryAnswerPaperDetails,
+    GetSchoolLogo,
+    GetPreExamNote,
+    MenuFunction,
 } from '../api'
-
+// 获取学校logo
+export const getSchoolLogo = () => {
+    return request(GetSchoolLogo)
+}
 // 获取租户
 export const getTenate = () => {
     return request(GETSCHOOLCODE, null)
@@ -62,4 +68,14 @@ export const submitExam = (data) => {
 // 试卷详情接口
 export const examDetail = (data) => {
     return request(QueryAnswerPaperDetails, data)
+}
+
+// 获取考试须知
+export const getPreExamNote = () => {
+    return request(GetPreExamNote)
+}
+
+// 获取菜单支付和消息
+export const getNav = () => {
+    return request(MenuFunction)
 }

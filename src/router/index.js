@@ -88,6 +88,11 @@ const routes = [
     component: () => import('../views/Detail/ExamDetail.vue')
   },
   {
+    path: '/test',
+    name: 'test',
+    component: () => import('../views/Test.vue')
+  },
+  {
     path: '*',
     name: '404',
     component: () => import('../views/ErrorPage.vue')

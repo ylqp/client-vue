@@ -15,7 +15,7 @@
             <BlankFilling v-if="queItem.answerMode === 'BlankFilling'" :question="queItem" />
             <EssayQuestion v-if="queItem.answerMode === 'EssayQuestion'" :question="queItem"/>
             <template v-if="queItem.answerMode === 'Composite'">
-                <Question  v-for="subItem in queItem.subqustionList" :key="subItem.questionId" :queItem="subItem" />
+                <Question class="comQue"  v-for="subItem in queItem.subqustionList" :key="subItem.questionId" :queItem="subItem" />
             </template>
             
         </div>
@@ -60,9 +60,12 @@ export default {
 }
 .question {
     // padding: 30px 0;
-    max-height: 100%;
+    height: 100%;
     overflow: auto;
     margin-bottom: 30px;
+}
+.comQue .question{
+    height: auto;
 }
 .queStem {
     font-size: 24px;
@@ -89,8 +92,11 @@ export default {
     .compositeCon {
         width: 50%;
         flex-shrink: 0;
-        max-height: 100%;
+        height: 100%;
         overflow: auto;
+        .question {
+            height: auto;
+        }
     }
 }
 </style>

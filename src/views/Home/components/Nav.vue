@@ -37,7 +37,7 @@
     </div>
     <div class="tab-container">
       <ul>
-        <li>
+        <li v-if="isOpenMessage">
           <div class="tabItem"
                :class="this.$route.name === 'msgList' ? 'on' : ''"
                @click="$router.push({
@@ -48,7 +48,7 @@
             <p>消息中心</p>
           </div>
         </li>
-        <li>
+        <li v-if="isOpenPay">
           <div class="tabItem"
                :class="this.$route.name === 'payList' ? 'on' : ''" 
                @click="$router.push({
@@ -84,14 +84,16 @@
 </template>
 <script>
 import { mapState } from 'vuex'
-import { getUserSimpleInfo, getExamType } from '@/http/modules/common'
+import { getUserSimpleInfo, getExamType, getNav } from '@/http/modules/common'
 export default {
     name: 'Nav',
     data () {
         return {
             userInfo: {},
             examTypes: [],
-            that: {}
+            that: {},
+            isOpenMessage: false,
+            isOpenPay: false,
         }
     },
     computed: {
@@ -110,10 +112,17 @@ export default {
         let examInfo = JSON.parse(data)
         this.examTypes = examInfo.ActivityTypes
       },
+      // 获取支付和消息中心是否开启
+      async getNavFlag () {
+        const { data } = await getNav()
+        let navInfo = JSON.parse(data)
+        // console.log(navInfo)
+        this.isOpenMessage = navInfo.isOpenMessage
+        this.isOpenPay = navInfo.isOpenPay
+      },
       goLogin () {
         this.$otsPop({
           content: '确实要退出到登录页面？',
-          icon: 'camera',
           success: () => {
             this.$router.push({
               name: 'Login'
@@ -126,6 +135,7 @@ export default {
       this.that = this
       this.getInfo()
       this.getExamInfo(this.userFPSettings.userId)
+      this.getNavFlag()
     },
     mounted () {
         // console.log(this.userFPSettings)

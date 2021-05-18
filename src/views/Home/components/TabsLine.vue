@@ -12,17 +12,20 @@
         </ul>
       </div>
       <div v-if="isShowSearch">
-          <el-input
+          <!-- <el-input
             placeholder="请输入搜索内容"
             prefix-icon="el-icon-search"
             clearable
             v-model="aa"
-          ></el-input>
+          ></el-input> -->
+          <search @on-click="searchFn"/>
       </div>
   </div>
 </template>
 <script>
+import Search from '../../../components/Search.vue'
 export default {
+  components: { Search },
   name: 'TabsLine',
   props: {
     tabList: {
@@ -34,11 +37,13 @@ export default {
     isShowSearch: {
       type: Boolean,
       default: true
+    },
+    searchFn: {
+      type: Function
     }
   },
   data () {
       return {
-        aa: '',
         currentId: 0
       }
   },

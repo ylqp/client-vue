@@ -2,7 +2,7 @@
   <div class="logoBg">
       <el-card class="box-card">
         <div class="schoolLogo">
-          <img src="@/assets/images/logo1.png" alt="">
+          <img :src="schoolLogo" alt="">
         </div>
         <el-form ref="form" :model="form" :rules="rules">
           <el-form-item prop="userName">
@@ -44,7 +44,7 @@
 </template>
 <script>
 import { login, getCheckCode } from '@/http/modules/login'
-import { getTenate } from '@/http/modules/common'
+import { getTenate, getSchoolLogo } from '@/http/modules/common'
 import { mapActions, mapState } from 'vuex'
 import Close from '@/components/Close.vue'
 const loginStatus = {
@@ -66,6 +66,7 @@ export default {
   },
   data () {
     return {
+      schoolLogo: require('@/assets/images/logo1.png'),
       checkCodeImg: '',
       // 需要验证码
       needCheckCode: false,
@@ -94,6 +95,9 @@ export default {
   },
   computed: {
     ...mapState('examType', ['examTypeList']),
+  },
+  created () {
+    this.getLogo()
   },
   methods: {
     ...mapActions('user', ['getUserFPSettings']),
@@ -143,6 +147,12 @@ export default {
     },
     getLoginStatus (reason) {
       return loginStatus[reason] || '登录失败，请联系管理员'
+    },
+    async getLogo () {
+      const { data } = await getSchoolLogo()
+      if (data) {
+        this.schoolLogo = data
+      }
     }
   },
   async mounted () {

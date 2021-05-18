@@ -52,21 +52,24 @@ const request = async (code, data) => {
     }
     return new Promise((resolve, reject) => {
         window.OTS[SENT](code, null, cdata, function (rdata) {
-            let res = JSON.parse(rdata)
-            let { status } = res
-            $loading.close(code)
-            if (status === 1) {
-              resolve(res)
-            } else {
-              if (code === 'CheckCode' && status === 0) {
-                console.log(res)
-                resolve(res)
-                return
-              }
-              console.log(res)
-              window.WEBOTS.$message('接口报错了')
-              reject(res)
+            try {
+                rdata = rdata.replace(/\\'/g, "'");
+                let res = JSON.parse(rdata)
+                let { status } = res
+                $loading.close(code)
+                if (status === 1) {
+                    resolve(res)
+                } else {
+                    console.log(res)
+                    window.WEBOTS.$message('接口报错了')
+                    reject(res)
+                }
+            } catch (error) {
+                window.WEBOTS.$message(`${code}接口报错了`)
+                console.log(rdata)
+                $loading.close(code)
             }
+            
         }, null)
     })
 }

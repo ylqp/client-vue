@@ -2,6 +2,7 @@
 @import './font.css'; /* 字体*/
 @import './mp.css'; /* 间距*/
 
+.tc {text-align: center;}
 .cp { cursor: pointer; }
 .w60px{width: 60px;}
 .w70px{width: 70px;}

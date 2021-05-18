@@ -96,6 +96,7 @@ export default {
             line-height: 40px;
             border-radius: 20px;
             background: rgba(212, 225, 238, 1);
+            flex-shrink: 0;
         }
         .optCon {
             color: #7784A1;
