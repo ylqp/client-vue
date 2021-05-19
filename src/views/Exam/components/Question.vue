@@ -49,7 +49,7 @@ export default {
         }
     },
     created () {
-        console.log(this.queItem)
+        // console.log(this.queItem)
         this.text = JSON.stringify(this.queItem)
     }
 }

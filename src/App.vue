@@ -45,4 +45,7 @@ export default {
   table td, table th{
     text-align: center !important;
   }
+  [v-cloak] {
+    opacity: 0;
+  }
 </style>

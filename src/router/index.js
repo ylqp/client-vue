@@ -75,7 +75,7 @@ const routes = [
     path: '/endexam',
     name: 'endExam',
     meta: {
-      title: '考试页'
+      title: '结束考试页'
     },
     component: () => import('../views/Exam/EndExam.vue')
   },
@@ -83,7 +83,7 @@ const routes = [
     path: '/examdetail',
     name: 'examDetail',
     meta: {
-      title: '考试页'
+      title: '详情页'
     },
     component: () => import('../views/Detail/ExamDetail.vue')
   },

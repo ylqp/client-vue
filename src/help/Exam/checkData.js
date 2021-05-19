@@ -90,7 +90,7 @@ export const dealCheck = {
         // 这里的tryCatch用于跳出循环
         try {
             data.forEach(item => {
-                console.log(123)
+                // console.log(123)
                 // 第一题
                 if (item.questionId === qids[0]) {
                     

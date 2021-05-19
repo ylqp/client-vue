@@ -48,6 +48,8 @@
       </el-dialog>
       <!-- 考试须知 -->
       <exam-note v-if="isShowNote" @cancel="isShowNote = false" :currentExamInfo="currentExamInfo" />
+      <!-- 支付弹窗 -->
+      <Pay v-if="isShowPay" :ids="payIds"  @closePay="closePay" />
   </div>
 </template>
 <script>
@@ -57,16 +59,20 @@ import TopLine from './components/TopLine'
 import TabsLine from './components/TabsLine'
 import { getStateRouter } from '@/help/HomeGoExam'
 import ExamNote from '../../components/ExamNote.vue'
+import Pay from './components/pay'
 export default {
   name: 'ExamList',
   components: {
     TopLine,
     TabsLine,
-    ExamNote
+    ExamNote,
+    Pay,
   },
   data () {
     return {
       isShowNote: false,
+      isShowPay: false,
+      payIds: '',
       currentExamInfo: null,
       topLineName: '',
       tabs: [{id: 3, name: '进行中'}, {id: 2, name: '未开始'}, {id: 4, name: '已结束'}],
@@ -97,6 +103,9 @@ export default {
     this.initHandler()
   },
   methods: {
+    closePay () {
+      this.isShowPay = false
+    },
     initHandler () {
 
       if (!this.$route.params.id) {
@@ -173,29 +182,35 @@ export default {
 
           let routePath = getStateRouter(data.goWhere);
           if (!routePath) {
-            this.$alert(data.message, '提示', {
-              type: 'warning',
-              callback: action => {
-              }
-            });
-          } else {
-              // 跳转放在考试须知里====同意即跳转
+              this.$alert(data.message, '提示', {
+                type: 'warning',
+                callback: action => {
+                }
+              });
+          } else if (routePath === 'goPay') {
 
+              this.payIds = examObj.testactivityarrangementid
+              this.isShowPay = true
+
+          } else {
+
+              // 跳转放在考试须知里====同意即跳转
               let infoObj = {
                 eid: examObj.testactivityarrangementid,
                 isFace: params.isFaceTest,
                 routePath: routePath
               }
               this.showPreNote(infoObj)
+
           }
 
-      } else if (data.state === 1) { // 不用跳转 只提示
+      } else if (data.state === 1) { // 不用跳转 只提示(这种情况无法进行考试)
           this.$alert(data.message, '提示', {
             type: 'warning',
             callback: action => {
             }
           });
-      } else if (data.state === 2) { // 先提示 再转跳
+      } else if (data.state === 2) { // 先提示 再转跳==(暂时没有这种情况)
 
       }
     },

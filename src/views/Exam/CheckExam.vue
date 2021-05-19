@@ -89,6 +89,7 @@ export default {
         isShowCheck: false,
         isShowPop: true,
         countDown: 5,
+        countTimer: null,
         // 当前试题
         currentQue: {},
         // 当前index
@@ -121,22 +122,19 @@ export default {
         }
     },
     created () {
+        console.log('-------------')
         console.log(this.$route.query.isFace)
-        // this.$otsPop({
-        //     content: '12333'
-        // })
-        this.initCheckData()
+        if (this.$route.query.isFace == 0) { // 直接跳考试页
+            this.$router.push({
+                name: 'exam',
+                query: this.$route.query
+            })
+        } else {
+            this.initCheckData()
+        }
     },
     mounted () {
-        // 处理复合题isAnswer
-        this.$eventBus.$on('dealCompositeIsAnswer', (qid) => {
-
-            let queItem = this.questionList.filter(item => item.questionId === qid)[0]
-
-			queItem.webData.isAnswer = queItem.subqustionList.every(function (item, index) {
-		    	return item.webData.isAnswer
-		    })
-        })
+        
         this.firstPop()
     },
     methods: {
@@ -193,7 +191,17 @@ export default {
             this.questionBack = questionBack
             // 展示第一道题
             this.currentIndex = 0
-            console.log(this.questionList)
+            // console.log(this.questionList)
+
+            // 处理复合题isAnswer
+            this.$eventBus.$on('dealCompositeIsAnswer', (qid) => {
+
+                let queItem = this.questionList.filter(item => item.questionId === qid)[0]
+
+                queItem.webData.isAnswer = queItem.subqustionList.every(function (item, index) {
+                    return item.webData.isAnswer
+                })
+            })
         },
         goExam () {
 
@@ -211,12 +219,33 @@ export default {
 
             // 验证通过跳考试页
             if (checkReault) {
-                if (this.$route.query.isFace === 1) {
-                
-                } else {
+                // 这块用来跳转
+                let examPath = this.$route.query.examPath
+
+                // 开始检测页面
+                if (examPath === 'startLiveTest'
+                    || examPath === 'startTakePhoto'
+                ) { 
                     this.$router.push({
-                    name: 'exam',
-                    query: this.$route.query
+                        name: 'startExam',
+                        query: {
+                            checkType: examPath
+                        }
+                    })
+                }
+                // 开始检测结束去考试页
+                if (examPath === 'startPhotoExam') {
+                    this.$router.push({
+                        name: 'exam',
+                        query: this.$route.query
+                    })
+                }
+                // 结束检测页
+                if (examPath === 'endTakePhoto' 
+                    || examPath === 'endLiveTest' 
+                ) {
+                    this.$router.push({
+                        name: 'endExam',
                     })
                 }
             }
@@ -238,14 +267,17 @@ export default {
             })
         },
         firstPop () {
-            const countTimer = setInterval(() => {
-                console.log(this.countDown)
+            this.countTimer = setInterval(() => {
+                // console.log(this.countDown)
                 this.countDown--
                 if (this.countDown <= 0) {
-                    clearInterval(countTimer)
+                    clearInterval(this.countTimer)
                 }
             }, 1000)
         }
+    },
+    beforeDestroy () {
+        clearInterval(this.countTimer)
     }
 }
 </script>

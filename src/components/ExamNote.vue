@@ -30,19 +30,24 @@ export default {
     methods: {
         async initExamNote () {
             const { data } = await getPreExamNote()
-            // console.log(data)
+            console.log(data)
             this.tipTitle = data.tipTitle
             this.examNote = data.examNote
-            this.isShowPop = true
+            if (data.isShow) {
+                this.isShowPop = true
+            } else {
+                this.startExam()
+            }
         },
         startExam () {
             console.log(this.currentExamInfo)
             this.$router.push({
-              name: 'checkExam',
-              query: {
-                isFace: this.currentExamInfo.isFace,
-                eid: this.currentExamInfo.eid
-              }
+                name: 'checkExam',
+                query: {
+                    isFace: this.currentExamInfo.isFace,
+                    eid: this.currentExamInfo.eid,
+                    examPath: this.currentExamInfo.routePath
+                }
             })
         }
     }
