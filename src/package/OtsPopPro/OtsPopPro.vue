@@ -33,22 +33,21 @@
 //     console.log(123)
 //     }
 // })
-const iconList = {
-    warning:  require('@/assets/images/pop-warning.png'),
-    message: require('@/assets/images/pop-message.png'),
-    wlan:  require('@/assets/images/pop-wlan-error.png'),
-    camera: require('@/assets/images/pop-camera-error.png'),
-}
+// const iconList = {
+//     warning:  require('@/assets/images/pop-warning.png'),
+//     message: require('@/assets/images/pop-message.png'),
+//     wlan:  require('@/assets/images/pop-wlan-error.png'),
+//     camera: require('@/assets/images/pop-camera-error.png'),
+// }
 export default {
     name: 'OtsPopPro',
     data () {
         return {
             dialogVisible: true,
             config: {
-                iconImg: iconList['warning'],
-                content: '确定要退出程序？',
+                content: '确定要退出程序？'
             },
-            
+
         }
     },
     mounted () {
@@ -63,10 +62,12 @@ export default {
 
         },
         popInit (obj) {
-            this.config = Object.assign(this.config, obj);
+            let iconImg = this.$constant.ICON_LIST[obj.iconImg]
+            this.config = Object.assign(this.config, {
+              ...obj,
+              iconImg : iconImg ? iconImg : this.$constant.ICON_LIST['warning']
+            });
             this.dialogVisible = true
-
-            
             this.promise = new Promise((resolve, reject) => {
                 this.reject = reject
                 this.resolve = resolve

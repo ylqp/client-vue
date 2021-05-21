@@ -12,12 +12,12 @@
     </div>
 </template>
 <script>
-const iconList = {
-    warning:  require('@/assets/images/pop-warning.png'),
-    message: require('@/assets/images/pop-message.png'),
-    wlan:  require('@/assets/images/pop-wlan-error.png'),
-    camera: require('@/assets/images/pop-camera-error.png'),
-}
+// const iconList = {
+//     warning:  require('@/assets/images/pop-warning.png'),
+//     message: require('@/assets/images/pop-message.png'),
+//     wlan:  require('@/assets/images/pop-wlan-error.png'),
+//     camera: require('@/assets/images/pop-camera-error.png'),
+// }
 export default {
     name: 'SlotPop',
     props: {
@@ -45,7 +45,7 @@ export default {
     },
     computed: {
         iconImg () {
-            return iconList[this.iconType]
+            return this.$constant.ICON_LIST[this.iconType]
         }
     },
     created () {
