@@ -14,6 +14,7 @@ import {
     GetSchoolLogo,
     GetPreExamNote,
     MenuFunction,
+    GetIsClientLogin
 } from '../api'
 // 获取学校logo
 export const getSchoolLogo = () => {
@@ -78,4 +79,9 @@ export const getPreExamNote = () => {
 // 获取菜单支付和消息
 export const getNav = () => {
     return request(MenuFunction)
+}
+
+// 获取是浏览器登录 还是  客户端登录
+export const getIsClientLogin = () => {
+    return request(GetIsClientLogin)
 }

@@ -45,7 +45,9 @@ export default {
                 // let imgEl = document.createElement('img')
                 // imgEl.imgSrc = data
                 const nbsp = this.somanynbsp(100)
-                let imgEl = `${nbsp}<p><img src="${data}"></br></p>${nbsp}`
+                // let imgEl = `${nbsp}<p><img  src="${data}"></br></p>${nbsp}`
+                let imgEl = `<img  src="${data}">`
+
                 this.$emit('refreshContent', imgEl)
                 this.exit()
             }

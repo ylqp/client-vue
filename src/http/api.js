@@ -1,5 +1,7 @@
 // 关闭程序接口
 export const APPCLOSE = 'APPCLOSE'
+// 判断是通过浏览器登录 还是 客户端端登录
+export const GetIsClientLogin = 'GetIsClientLogin'
 // 获取菜单项
 export const MenuFunction = 'MenuFunction'
 // 获取学习logo

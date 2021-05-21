@@ -4,7 +4,11 @@
             <span class="mr5 fl">{{queItem.sequence + '.'}}</span>
             <span v-html="queItem.stem"></span>
         </div>
-        <div class="quetionContent" :class="queItem.answerMode === 'Composite'? 'compositeCon' : 'mt30'">
+        <!-- 大作业 -->
+        <div class="quetionContent" v-if="$route.name=='examDa'">
+            <p class="f14 col_grayQ mt20">请在纸页上作答，并拍照上传。( 分数：<span>{{queItem.score}}</span>分 )</p>
+        </div>
+        <div class="quetionContent" :class="queItem.answerMode === 'Composite'? 'compositeCon' : 'mt30'" v-else>
             <SingleSelection v-if="queItem.answerMode === 'SingleSelection'" :question="queItem"/>
             <MultiSelection v-if="queItem.answerMode === 'MultiSelection'" :question="queItem"/>
             <Judgement v-if="queItem.answerMode === 'Judgement'" :question="queItem"/>
@@ -17,7 +21,6 @@
             <template v-if="queItem.answerMode === 'Composite'">
                 <Question class="comQue"  v-for="subItem in queItem.subqustionList" :key="subItem.questionId" :queItem="subItem" />
             </template>
-            
         </div>
     </div>
 </template>

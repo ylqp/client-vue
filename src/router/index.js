@@ -72,6 +72,14 @@ const routes = [
     component: () => import('../views/Exam/Exam.vue')
   },
   {
+    path: '/examda',
+    name: 'examDa',
+    meta: {
+      title: '吉大大作业考试页'
+    },
+    component: () => import('../views/Exam/ExamDa.vue')
+  },
+  {
     path: '/endexam',
     name: 'endExam',
     meta: {

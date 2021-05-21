@@ -9,7 +9,7 @@ const SENT = process.env.NODE_ENV === 'development' ? 'Sent_Post' : 'Sent'
 class Loading {
   constructor () {
     this.loadingCount = 0
-    this.notLoading = ['GetPaymentResult']
+    this.notLoading = ['GetPaymentResult', 'TempSaveAnswerPaper']
     this.$eventBus = Vue.prototype.$eventBus
     this.loadingInstance = null
   }
@@ -61,7 +61,7 @@ const request = async (code, data) => {
                     resolve(res)
                 } else {
                     console.log(res)
-                    window.WEBOTS.$message('接口报错了')
+                    window.WEBOTS.$message(`${code}接口报错了${res.error}`)
                     reject(res)
                 }
             } catch (error) {

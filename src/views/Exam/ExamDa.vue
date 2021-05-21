@@ -11,15 +11,33 @@
         </div>
         <div class="mainCon">
             <div class="left">
-                <div class="daBiaoTi mb20">
+                <!-- <div class="daBiaoTi mb20">
                     <span class="f18 fb ml20 col_grayZ">{{`${currentQue.daBiaoTiNum}、${currentQue.daBiaoTiName}`}}</span>
-                    <!-- 显示题目 小括号后边的东西 -->
+                    
                 </div>
                 <div class="queArea">
                     <Question :queItem="currentQue" />
                 </div>
                 <div class="footer mt20 mb20">
                     <div class="nextBtn" :class="isCanNext ? '' : 'gray'" @click="getNextQue">下一题</div>
+                </div> -->
+                <div v-for="item in questionBack" :key="item.id">
+                    <div class="daBiaoTi mb20">
+                        <span class="f18 fb ml20 col_grayZ">{{`${item.sequencenumber}、${item.name}`}}</span>
+                    </div>
+                    <div class="queArea" v-for="queItem in item.paperQuestionList" :key="queItem.id">
+                         <Question :queItem="queItem" />
+                    </div>
+                </div>
+                
+                <div class="answerImgBox" v-viewer="viewerConfig">
+                    <div v-for="i in 10" :key="i" class="imgItem" style="background-image:url(https://otstest.chinaedu.net:8443/img2/ots/cate/images/2021/0521/0ec38cf9-6782-48d0-acf7-50123f67dd07.png)">
+                        <div class="delIcon"><i class="iconfont icon-exit f12"></i></div>
+                        <img    src="https://otstest.chinaedu.net:8443/img2/ots/cate/images/2021/0521/0ec38cf9-6782-48d0-acf7-50123f67dd07.png" alt="">
+                    </div>
+                </div>
+                <div>
+                    <camera-upload />
                 </div>
             </div>
             <div class="right">
@@ -87,15 +105,39 @@ import { dealQueItemAnswer, mountQueItemAnswer, copyPageData, getExamFlag } from
 import { exitClient } from '@/http/modules/close'
 import SlotPop from '../../components/SlotPop.vue'
 import OtsButton from '../../components/Button/OtsButton.vue'
+import CameraUpload from '../../components/CameraUpload.vue'
+
 export default {
-    name: 'Exam',
+    name: 'ExamDa',
     components: {
         Question,
         SlotPop,
         OtsButton,
+        CameraUpload
     },
     data () {
         return {
+            viewerConfig: {
+                // 图片是否可移动
+                movable: false,
+                // 显示当前图片标题
+                title: false,
+                // 播放时是否全屏
+                fullscreen: false,
+                toolbar: {
+                    zoomIn: 1,
+                    zoomOut: 1,
+                    oneToOne: 1,
+                    reset: 1,
+                    prev: 1,
+                    play: 0,
+                    next: 1,
+                    rotateLeft: 1,
+                    rotateRight: 1,
+                    flipHorizontal: 1,
+                    flipVertical: 1
+                },
+            },
             isShowPop: false,
             text: 1,
             isShowCamera: false,
@@ -503,6 +545,7 @@ export default {
             background: rgba(255, 255, 255, 1);
             box-shadow: 0px 2px 6px 0px rgb(234 235 236);
             border-radius: 2px;
+            overflow: auto;
             .daBiaoTi {
                 height: 60px;
                 line-height: 60px;
@@ -530,6 +573,40 @@ export default {
                 }
                 .nextBtn.gray{
                     background: rgba(231, 236, 241, 1);
+                }
+            }
+            .answerImgBox {
+                display: flex;
+                padding: 20px;
+                flex-flow: wrap;
+                .imgItem {
+                    width: 100px;
+                    height: 100px;
+                    flex-shrink: 0;
+                    overflow: hidden;
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    margin-left: 10px;
+                    margin-bottom: 15px;
+                    border-radius: 3px;
+                    position: relative;
+                    .delIcon {
+                        position: absolute;
+                        right: 0;
+                        top: 0;
+                        width: 25px;
+                        height: 15px;
+                        background: rgb(0 0 0 / 0.7);
+                        text-align: center;
+                        color: #fff;
+                        cursor: pointer;
+                        border-bottom-left-radius: 40%;
+                    }
+                    img {
+                        height: 100%;
+                        width: 100%;
+                    }
                 }
             }
         }
