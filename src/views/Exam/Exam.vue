@@ -16,7 +16,7 @@
                     <!-- 显示题目 小括号后边的东西 -->
                 </div>
                 <div class="queArea">
-                    <Question :queItem="currentQue" />
+                    <Question :queItem="currentQue" :isFlex="true" />
                 </div>
                 <div class="footer mt20 mb20">
                     <div class="nextBtn" :class="isCanNext ? '' : 'gray'" @click="getNextQue">下一题</div>
@@ -441,7 +441,11 @@ export default {
          * 退出考试
          */
         exitExam () {
-            this.isShowPop = true
+            this.$otsPopPro({
+                content: '确定退出考试',
+            }).then(() => {
+                this.goExamList()
+            })
         },
         goExamList () {
             this.$router.push({

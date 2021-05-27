@@ -4,6 +4,7 @@
  * callback: 回调函数
  */
 import Vue from 'vue'
+// const SENT = 'Sent'
 const SENT = process.env.NODE_ENV === 'development' ? 'Sent_Post' : 'Sent'
 
 class Loading {

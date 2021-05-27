@@ -9,7 +9,7 @@
                 <ots-button name="确定" v-show="countDown<=0" @click.native="isShowPop=false"/>
             </div>
         </slot-pop> -->
-        <ul class="figure-list"> 
+        <!-- <ul class="figure-list"> 
             <li> 
                 <figure style="background-image:url(https://otstest.chinaedu.net:8443/img2/ots/cate/images/2021/0521/0ec38cf9-6782-48d0-acf7-50123f67dd07.png)"> 
                 <a href="#"></a> 
@@ -41,7 +41,8 @@
                 <a href="#"></a> 
                 </figure> 
             </li> 
-        </ul>
+        </ul> -->
+        <video-list style="width: 300px" />
   </div>
 </template>
 <script>
@@ -49,8 +50,9 @@ import OtsButton from '../components/Button/OtsButton.vue'
 import ExamNote from '../components/ExamNote.vue'
 import Search from '../components/Search.vue'
 import SlotPop from '../components/SlotPop.vue'
+import VideoList from '../components/VideoList.vue'
 export default {
-    components: { Search, ExamNote, SlotPop, OtsButton },
+    components: { Search, ExamNote, SlotPop, OtsButton, VideoList },
     name: 'Test',
     data () {
         return {
@@ -70,6 +72,7 @@ export default {
                 clearInterval(countTimer)
             }
         }, 1000)
+        // this.$message('kkkk')
     },
     methods: {
         searchFn (val) {

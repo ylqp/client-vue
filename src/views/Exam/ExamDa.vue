@@ -31,13 +31,15 @@
                 </div>
                 
                 <div class="answerImgBox" v-viewer="viewerConfig">
-                    <div v-for="i in 10" :key="i" class="imgItem" style="background-image:url(https://otstest.chinaedu.net:8443/img2/ots/cate/images/2021/0521/0ec38cf9-6782-48d0-acf7-50123f67dd07.png)">
-                        <div class="delIcon"><i class="iconfont icon-exit f12"></i></div>
-                        <img    src="https://otstest.chinaedu.net:8443/img2/ots/cate/images/2021/0521/0ec38cf9-6782-48d0-acf7-50123f67dd07.png" alt="">
+                    <div v-for="(img, index) in answerImgList" :key="img" class="imgItem" :style="`background-image:url(${img})`">
+                        <div class="delIcon" @click="delImg(index)"><i class="iconfont icon-exit f12"></i></div>
+                        <img :src="img" alt="">
                     </div>
                 </div>
-                <div>
-                    <camera-upload />
+                <div class="uploadCon">
+                    <camera-upload @getImgUrl="getImgUrl">
+                        <p class="f16 col_red">(大作业可以多次保存，但只能交卷一次，交卷后无法再次上传图片)</p>
+                    </camera-upload>
                 </div>
             </div>
             <div class="right">
@@ -105,7 +107,7 @@ import { dealQueItemAnswer, mountQueItemAnswer, copyPageData, getExamFlag } from
 import { exitClient } from '@/http/modules/close'
 import SlotPop from '../../components/SlotPop.vue'
 import OtsButton from '../../components/Button/OtsButton.vue'
-import CameraUpload from '../../components/CameraUpload.vue'
+import CameraUpload from '@/components/CameraUpload.vue'
 
 export default {
     name: 'ExamDa',
@@ -138,6 +140,7 @@ export default {
                     flipVertical: 1
                 },
             },
+            answerImgList: [],
             isShowPop: false,
             text: 1,
             isShowCamera: false,
@@ -310,28 +313,52 @@ export default {
             })
         },
         async submitExamFn () {
+
             if (this.isFreezeSumbit) {
                 this.$message('不可重复提交')
                 return
             }
-            // 判断是否
-            if (this.doneQues.length !== this.questionList.length) {
-                this.$otsPopPro({
-                    content: '你有未答试题，确定交卷吗？',
-                }).then(() => {
-                    this.submit(0)
-                }).catch(() => {
 
-                })
+            // 判断是否
+            this.$otsPopPro({
+                content: '交卷后不能对试卷进行修改，确认交卷？',
+            }).then(() => {
+                this.getExamDaAnswer()
+            }).catch(() => {
+                        
+            })
+             
+        },
+        getExamDaAnswer () {
+            // 大作业把答案传给最后一道题  如果是复合题 则传给小题
+            let lastQue = this.questionList[this.questionList.length - 1]
+            console.log(lastQue)
+            // 处理答案
+            const content = this.dealImg()
+            if (lastQue.answerMode === 'Composite') {
+                let lastSubQue = lastQue.subqustionList[lastQue.subqustionList.length - 1]
+                lastSubQue.webData.answer = content
             } else {
-                this.$otsPopPro({
-                    content: '交卷后不能对试卷进行修改，确认交卷？',
-                }).then(() => {
-                    this.submit(0)
-                }).catch(() => {
-                            
-                })
-            }   
+                lastQue.webData.answer = content
+            }
+            // 提交考试
+            this.submit(0)
+        },
+        dealImg () {
+            let content = ''
+            this.answerImgList.forEach(item => {
+                content = content + `<img width="300px" height="300px" src=${item} /></br>`
+            })
+            console.log(content)
+            return content
+        },
+        // 删除某个照片答案
+        delImg (index) {
+            this.$otsPopPro({
+                content: '确定删除照片？'
+            }).then(() => {
+                this.answerImgList.splice(index, 1)
+            })
         },
         async submit (type) {
             // 提交考试的参数
@@ -483,12 +510,19 @@ export default {
          * 退出考试
          */
         exitExam () {
-            this.isShowPop = true
+            this.$otsPopPro({
+                content: '确定退出考试',
+            }).then(() => {
+                this.goExamList()
+            })
         },
         goExamList () {
             this.$router.push({
                 name: 'examList'
             })
+        },
+        getImgUrl (img) {
+            this.answerImgList.push(img)
         }
     },
     beforeDestroy () {
@@ -608,6 +642,9 @@ export default {
                         width: 100%;
                     }
                 }
+            }
+            .uploadCon {
+                padding: 30px;
             }
         }
         .right {

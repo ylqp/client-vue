@@ -59,3 +59,13 @@ export const OtsClientCreateUploadID = 'OtsClientCreateUploadID'
 export const OtsClientGetFileUrl = 'OtsClientGetFileUrl'
 
 
+// 获取摄像头
+export const GetVideoList = 'GetVideoList'
+// 选择摄像头
+export const SelectVideo = 'SelectVideo'
+// 获取摄像头框
+export const GetCameraRectangle = 'GetCameraRectangle'
+// 隐藏摄像头
+export const HideCamera = 'HideCamera'
+
+

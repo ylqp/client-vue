@@ -1,12 +1,56 @@
-
 var OTS = {
+    OtsHost : "",
     callBackList: {},
     callBackCodeList: {},
-
-
     SetOtsHost: {},
     SetFormIsShow: {},
     SetCheckState: {},
+    GetCameraRectangle: function (data) { 
+            setTimeout(function () {
+                var cameraObject = $("#cameraArea");
+                var CameraRectangle = {};
+                CameraRectangle.Width = 0;
+                CameraRectangle.Height = 0;
+                CameraRectangle.Top = 0;
+                CameraRectangle.Left = 0;
+                if (cameraObject != null && cameraObject != undefined) {
+                    var sp = OTS.ScollPostion()
+                    CameraRectangle.Top = $("#cameraArea").offset().top - sp.top;
+                    CameraRectangle.Left = $("#cameraArea").offset().left - sp.left;
+                    CameraRectangle.Width = $("#cameraArea").width();
+                    CameraRectangle.Height = $("#cameraArea").height();
+                    OTS.Sent("GetCameraRectangle", CameraRectangle, null, function (data) {
+                        setTimeout(function () { try { $('.picBtn').removeClass('grayNone'); } catch (e) { } }, 2500);
+                    }, null);
+                }
+            }, 10);
+    },
+    ScollPostion: function () {
+        var t, l, w, h;
+        if (document.documentElement && document.documentElement.scrollTop) {
+            t = document.documentElement.scrollTop;
+            l = document.documentElement.scrollLeft;
+            w = document.documentElement.scrollWidth;
+            h = document.documentElement.scrollHeight;
+        } else if (document.body) {
+            t = document.body.scrollTop;
+            l = document.body.scrollLeft;
+            w = document.body.scrollWidth;
+            h = document.body.scrollHeight;
+        }
+        return {
+            top: t,
+            left: l,
+            width: w,
+            height: h
+        };
+    },
+    GetVideoList:function (bindFun) {
+        OTS.Sent("GetVideoList", null, null, function (data) {            
+        }, null);
+    },
+
+
     CallBack: function (callBackKey, callBackData, isChipter) {
         setTimeout(function () {
             var base64data = new OTS.Base64();
@@ -31,17 +75,17 @@ var OTS = {
             }
         }, 0);
     },
+    
+    //code 请求的接口的code会提供一个列表
+    //param 地址栏参数这里不用带?
+    //data 传输的jsondata
+    //callBack 程序回调方法 必须带一个参数  callback(data) 这种形状的，一定要传函数的名称 function callback(data){} 这时候就传'callback'就好 不要 function(){}这种方式直接往里传
+    //callback可以直接传方法名了不用 以字符串的方式穿了2019年1月11日17:28:27
     Sent: function (code, param, data, callBack, checkNotGoFun) {
         setTimeout(function () {
-            // && code != "ClientCheckLogin"
             if (code != "GetCameraRectangle" && code != "HideCamera" && code != "TempSaveAnswerPaper" && code != "GetIMEName" && code != "OTSOpen" && code != "GetPaymentResult") {
                 //Common.LightBox.show();
-            }
-            //code 请求的接口的code会提供一个列表
-            //param 地址栏参数这里不用带?
-            //data 传输的jsondata
-            //callBack 程序回调方法 必须带一个参数  callback(data) 这种形状的，一定要传函数的名称 function callback(data){} 这时候就传'callback'就好 不要 function(){}这种方式直接往里传
-            //callback可以直接传方法名了不用 以字符串的方式穿了2019年1月11日17:28:27
+            }          
             var paramData = new Object();
             paramData.code = code;
             paramData.param = param;
@@ -50,15 +94,8 @@ var OTS = {
             OTS.callBackList[callBackKey] = callBack;
             OTS.callBackCodeList[callBackKey] = code;
             paramData.callBack = callBackKey;
-            //alert("sentcode:" + code)
-            //alert(14)
-
-            event = document.createEvent('MessageEvent');
-            var origin = window.location.protocol + '//' + window.location.host;
-            var jsonData = OTS.ObjectToJson(paramData)
-            event.initMessageEvent('sent', true, true, jsonData, origin, 2507, window, null);
-            document.dispatchEvent(event);
-            //alert("sentOver:" + code)
+            var jsonData = OTS.ObjectToJson(paramData);
+            otsClinetFunction.sentData(jsonData);
         }, 5);
     },
     Sent_Post: function (code, param, data, callBack, checkNotGoFun) {
@@ -128,6 +165,35 @@ var OTS = {
         var newjsondata = jsonData.replace(/\\'/g, "'");
         return JSON.parse(newjsondata);
     },
+    
+    SetCheckState: function (checkListJson) {
+        var base64data = new OTS.Base64();
+
+        //checkState = base64data.decode(state);
+        //checkMsg = base64data.decode(msg);
+        //checkName = base64data.decode(name);
+        //checkErrorType = base64data.decode(errorType);
+
+
+
+
+        checkListStr = base64data.decode(checkListJson);
+        checkList = OTS.JsonToObject(checkListStr);
+        //alert(checkListStr)
+
+
+
+
+    },
+    SetFormIsShow: function (isShow) {
+        var base64data = new OTS.Base64();
+        formIsShow = base64data.decode(isShow);
+    },
+    SetOtsHost: function (otsHost) {
+        var base64data = new   OTS.Base64();
+        OTS.OtsHost = (base64data.decode(otsHost));
+    },
+
     Base64: function () {
 
         // private property
@@ -235,3 +301,12 @@ var OTS = {
 OTS.callBackCodeList = {};
 OTS.callBackList = {};
 window.OTS = OTS;
+
+ 
+$(document).ready(function () {
+    document.oncontextmenu = function () { return false; };
+    document.onselectstart = function () { return false; };   
+});
+
+ 
+ 

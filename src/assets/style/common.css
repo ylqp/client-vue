@@ -2,6 +2,8 @@
 @import './font.css'; /* 字体*/
 @import './mp.css'; /* 间距*/
 
+.pr {position: relative;}
+.pa {position: absolute;}
 .tc {text-align: center;}
 .cp { cursor: pointer; }
 .w60px{width: 60px;}

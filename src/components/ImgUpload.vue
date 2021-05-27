@@ -42,27 +42,16 @@ export default {
         async getImg () {
             const { data } = await getUploadImg()
             if (data) {
-                // let imgEl = document.createElement('img')
-                // imgEl.imgSrc = data
-                const nbsp = this.somanynbsp(100)
-                // let imgEl = `${nbsp}<p><img  src="${data}"></br></p>${nbsp}`
-                let imgEl = `<img  src="${data}">`
-
-                this.$emit('refreshContent', imgEl)
+                
+                // data为图片地址
+                this.$emit('refreshContent', data)
                 this.exit()
             }
         },
         exit () {
             this.$emit('close')
         },
-        somanynbsp (how) {
-            var nbsps = '';
-            for (var i = 0; i < how; i++) {
-                nbsps = nbsps + '&nbsp;';
-
-            }
-            return nbsps;
-        }
+        
     }
 }
 </script>

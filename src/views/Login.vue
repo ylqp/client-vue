@@ -4,24 +4,49 @@
         <div class="schoolLogo">
           <img :src="schoolLogo" alt="">
         </div>
+        <div v-if="isDoubleLogin" class="loginTabs">
+          <div @click="accountType='A'" class="item" :class="accountType=='A' ? 'select' : ''">用户名登录</div>
+          <div @click="accountType='B'" class="item" :class="accountType=='B' ? 'select' : ''">身份证登录</div>
+        </div>
         <el-form ref="form" :model="form" :rules="rules">
-          <el-form-item prop="userName">
-            <el-input 
-              clearable 
-              v-model="form.userName" 
-              placeholder="请输入用户名" 
-              prefix-icon="iconfont icon-user"
-            ></el-input>
-          </el-form-item>
-          <el-form-item prop="password">
-            <el-input 
-              clearable 
-              type="password" 
-              v-model="form.password" 
-              placeholder="请输入密码"
-              prefix-icon="iconfont icon-pass"
-            ></el-input>
-          </el-form-item>
+          <template v-if="isDoubleLogin && accountType=='B'">
+              <el-form-item prop="idCard">
+              <el-input 
+                clearable 
+                v-model="form.idCard" 
+                placeholder="请输入身份证号"
+                prefix-icon="iconfont icon-cred"
+              ></el-input>
+            </el-form-item>
+            <el-form-item prop="realName">
+              <el-input 
+                clearable 
+                v-model="form.realName" 
+                placeholder="请输入姓名"
+                prefix-icon="iconfont icon-biaoqian"
+              ></el-input>
+            </el-form-item>
+          </template>
+          <template v-else>
+              <el-form-item prop="userName">
+              <el-input 
+                clearable 
+                v-model="form.userName" 
+                placeholder="请输入用户名" 
+                prefix-icon="iconfont icon-user"
+              ></el-input>
+            </el-form-item>
+            <el-form-item prop="password">
+              <el-input 
+                clearable 
+                type="password" 
+                v-model="form.password" 
+                placeholder="请输入密码"
+                prefix-icon="iconfont icon-pass"
+              ></el-input>
+            </el-form-item>
+          </template>
+          
           <el-form-item prop="checkCode" v-if="needCheckCode">
             <div class="checkCodeBox">
                 <el-input 
@@ -47,6 +72,7 @@ import { login, getCheckCode } from '@/http/modules/login'
 import { getTenate, getSchoolLogo } from '@/http/modules/common'
 import { mapActions, mapState } from 'vuex'
 import Close from '@/components/Close.vue'
+import doubleTenant from '@/config/loginTenant'
 const loginStatus = {
     'needCheckCode': '需要验证码',
     'checkCodeError': '验证码错误',
@@ -68,6 +94,8 @@ export default {
     return {
       schoolLogo: require('@/assets/images/logo1.png'),
       checkCodeImg: '',
+      isDoubleLogin: false,
+      accountType: 'A',
       // 需要验证码
       needCheckCode: false,
       loginParams: {
@@ -76,16 +104,23 @@ export default {
         checkCode: "",
       },
       form: {
+        idCard: '',
         userName: '',
         password: '',
         checkCode: ''
       },
       rules: {
+        idCard: [
+          { required: true, message: '请输入身份证号', trigger: 'blur'}
+        ],
+        realName: [
+          { required: true, message: '请输入姓名', trigger: 'blur'}
+        ],
         userName: [
           { required: true, message: '请输入用户名', trigger: 'blur'}
         ],
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur'}
+          { required: true, message:  '请输入密码', trigger: 'blur'}
         ],
         checkCode: [
           { required: true, message: '请输入验证码', trigger: 'blur'}
@@ -110,8 +145,14 @@ export default {
       // 1. 表单验证
       await this.$refs.form.validate()
       // 2. 处理参数
-      this.loginParams.name = this.form.userName
-      this.loginParams.pass = this.form.password
+      if (this.isDoubleLogin && this.accountType == 'B') {
+        this.loginParams.name = this.form.idCard
+        this.loginParams.pass = this.form.realName
+        this.loginParams.accountType = this.accountType
+      } else {
+        this.loginParams.name = this.form.userName
+        this.loginParams.pass = this.form.password
+      }
       this.loginParams.checkCode =this.form.checkCode
       // 3. 调接口并处理结果
       const { data } = await login(this.loginParams)
@@ -153,10 +194,18 @@ export default {
       if (data) {
         this.schoolLogo = data
       }
+    },
+    dealLoginType (tenant) {
+      if (doubleTenant.indexOf(tenant) === -1) {
+        return
+      }
+      this.isDoubleLogin = true
     }
   },
   async mounted () {
     const { data } = await getTenate()
+    // 判断登录的方式
+    this.dealLoginType(data)
   }
 }
 </script>
@@ -172,13 +221,27 @@ export default {
     position: relative;
     width: 380px;
     .schoolLogo {
-      height: 100px;
+      height: 90px;
       display: flex;
       justify-content: center;
       align-items: center;
       img {
         width: 150px;
         height: 50px;
+      }
+    }
+    .loginTabs {
+      display: flex;
+      padding: 20px;
+      justify-content: space-around;
+      padding-top: 0;
+      .item {
+        cursor: pointer;
+        font-size: 16px;
+        height: 30px;
+      }
+      .select {
+        border-bottom: 2px solid #1C82FF;
       }
     }
     .loginBtn {
@@ -207,6 +270,7 @@ export default {
     height: 50px;
     line-height: 50px;
     border-radius: 25px;
+    padding-left: 35px;
 }
 .checkCodeBox {
   width: 100%;

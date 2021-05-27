@@ -7,13 +7,13 @@
 <script>
 import Shurufa from './components/Shurufa.vue'
 export default {
-  name: 'app',
-  components: {
-    Shurufa
-  },
-  methods: {
-    
-  }
+    name: 'app',
+    components: {
+      Shurufa
+    },
+    methods: {
+      
+    }
 }
 </script>
 <style>

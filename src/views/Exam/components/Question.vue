@@ -1,14 +1,19 @@
 <template>
-    <div class="question" :class="queItem.answerMode === 'Composite'? 'question-Composite' : ''">
-        <div class="queStem" :class="queItem.answerMode === 'Composite'? 'compositeStem' : ''">
+    <div class="question" :class="queItem.answerMode === 'Composite' && isFlex ? 'question-Composite' : ''">
+        <div class="queStem" :class="queItem.answerMode === 'Composite' && isFlex ? 'compositeStem' : ''">
             <span class="mr5 fl">{{queItem.sequence + '.'}}</span>
             <span v-html="queItem.stem"></span>
         </div>
         <!-- 大作业 -->
         <div class="quetionContent" v-if="$route.name=='examDa'">
-            <p class="f14 col_grayQ mt20">请在纸页上作答，并拍照上传。( 分数：<span>{{queItem.score}}</span>分 )</p>
+            <template v-if="queItem.answerMode === 'Composite'">
+                <Question class="comQue"  v-for="subItem in queItem.subqustionList" :key="subItem.questionId" :queItem="subItem" />
+            </template>
+            <template v-else>
+                <p class="f14 col_grayQ mt20">请在纸页上作答，并拍照上传。( 分数：<span>{{queItem.score}}</span>分 )</p>
+            </template>
         </div>
-        <div class="quetionContent" :class="queItem.answerMode === 'Composite'? 'compositeCon' : 'mt30'" v-else>
+        <div class="quetionContent" :class="queItem.answerMode === 'Composite' && isFlex ? 'compositeCon' : 'mt30'" v-else>
             <SingleSelection v-if="queItem.answerMode === 'SingleSelection'" :question="queItem"/>
             <MultiSelection v-if="queItem.answerMode === 'MultiSelection'" :question="queItem"/>
             <Judgement v-if="queItem.answerMode === 'Judgement'" :question="queItem"/>
@@ -44,11 +49,15 @@ export default {
     props: {
         queItem: {
             type: Object
+        },
+        isFlex: {
+            type: Boolean,
+            default: false
         }
     },
     data () {
         return {
-            text: ''
+            text: '',
         }
     },
     created () {

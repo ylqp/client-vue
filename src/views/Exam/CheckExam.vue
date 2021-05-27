@@ -23,6 +23,7 @@
             </div>
             <div class="right">
                 <div id="cameraArea" class="camArea" v-if="isShowCamera"></div>
+                <video-list />
                 <div class="tika">
                     <div class="tishu">
                         <img src="@/assets/images/tika.png" class="mr5" />
@@ -80,9 +81,10 @@ import { dealQueItemAnswer, mountQueItemAnswer, copyPageData, getExamFlag } from
 import Question from './components/Question'
 import SlotPop from '@/components/SlotPop.vue'
 import OtsButton from '@/components/Button/OtsButton.vue'
+import VideoList from '../../components/VideoList.vue'
 export default {
     name: 'CheckExam',
-    components: { Question, SlotPop, OtsButton },
+    components: { Question, SlotPop, OtsButton, VideoList },
     data () {
         return {
         isShowCamera: true,
@@ -136,6 +138,10 @@ export default {
     mounted () {
         
         this.firstPop()
+
+        // this.getVideo()
+
+        // window.OTS.GetCameraRectangle()
     },
     methods: {
         initCheckData () {
@@ -275,6 +281,7 @@ export default {
                 }
             }, 1000)
         }
+        
     },
     beforeDestroy () {
         clearInterval(this.countTimer)

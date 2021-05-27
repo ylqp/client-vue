@@ -116,6 +116,19 @@ const router = new VueRouter({
   routes
 })
 
+let allowRoute = true
+router.beforeEach((to, from, next) => {
+    next(allowRoute)
+    if (!allowRoute) {
+      allowRoute = true
+    }
+})
 
-
+// 阻止浏览器回退事件
+window.addEventListener('popstate', function () {
+  // allowRoute = false
+});
+// window.onpopstate = function () {
+//   console.log(1)
+// }
 export default router

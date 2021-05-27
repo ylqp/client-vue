@@ -6,6 +6,7 @@
         </div>
         <div class="col_red">
             提示：拍照上传功能仅限对纸面作答内容（公式、绘图、表格、编程）进行拍照，上传其他内容一律视为无效！
+            <slot />
         </div>
         <!-- 图片上传 -->
         <img-upload v-if="isShowImgUpload" @close="closeImgUpload" @refreshContent="refreshContent"/>
@@ -29,7 +30,7 @@ export default {
             this.isShowImgUpload = false
         },
         refreshContent (img) {
-            console.log(img)
+            this.$emit('getImgUrl', img)
         }
     }
 }
