@@ -7,6 +7,7 @@ const stateList = {
     startExam: 'startExam',
     // 开始考试
     startPhotoExam: 'startPhotoExam',
+    startLiveExam: 'startLiveExam',
     // 开始拍照
     startTakePhoto: 'startTakePhoto',
     // 结束拍照

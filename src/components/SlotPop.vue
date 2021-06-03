@@ -5,7 +5,7 @@
                 <span class="f14">{{tipTitle}}</span>
             </div>
             <div class="popCon">
-                <img :src="iconImg" alt="" class="mb20" v-if="isNeedIcon">
+                <img :src="iconImg" alt="" class="mb15" v-if="isNeedIcon">
                 <slot />
             </div>
         </div>
@@ -74,7 +74,7 @@ export default {
 .popBox {
     position: relative;
     min-width: 480px;
-    min-height: 360px;
+    min-height: 320px;
     background: #FFF;
     overflow: hidden;
     box-shadow: 0px 10px 40px 0px rgb(39 46 64 / 80%);

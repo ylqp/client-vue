@@ -94,6 +94,9 @@ var OTS = {
             OTS.callBackList[callBackKey] = callBack;
             OTS.callBackCodeList[callBackKey] = code;
             paramData.callBack = callBackKey;
+
+            console.log(code+"_"+callBackKey);
+
             var jsonData = OTS.ObjectToJson(paramData);
             otsClinetFunction.sentData(jsonData);
         }, 5);

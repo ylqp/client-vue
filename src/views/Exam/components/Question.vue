@@ -3,6 +3,7 @@
         <div class="queStem" :class="queItem.answerMode === 'Composite' && isFlex ? 'compositeStem' : ''">
             <span class="mr5 fl">{{queItem.sequence + '.'}}</span>
             <span v-html="queItem.stem"></span>
+            <span class="f12 col_grayQ">{{`（分数：${queItem.score}分）`}}</span>
         </div>
         <!-- 大作业 -->
         <div class="quetionContent" v-if="$route.name=='examDa'">

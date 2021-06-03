@@ -52,8 +52,10 @@ const request = async (code, data) => {
       cdata = JSON.stringify(data)
     }
     return new Promise((resolve, reject) => {
+        console.log(code)
         window.OTS[SENT](code, null, cdata, function (rdata) {
             try {
+
                 rdata = rdata.replace(/\\'/g, "'");
                 let res = JSON.parse(rdata)
                 let { status } = res
@@ -62,15 +64,19 @@ const request = async (code, data) => {
                     resolve(res)
                 } else {
                     console.log(res)
-                    window.WEBOTS.$message(`${code}接口报错了${res.error}`)
-                    reject(res)
+                    window.WEBOTS.$otsPopPro({
+                      content: `${code}:${res.error}`,
+                      isNeedCancel: false
+                    }).then(() => {
+                      reject(res)
+                    })
                 }
             } catch (error) {
                 window.WEBOTS.$message(`${code}接口报错了`)
+                reject('接口报错,请联系管理员')
                 console.log(rdata)
                 $loading.close(code)
             }
-            
         }, null)
     })
 }

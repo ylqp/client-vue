@@ -1,5 +1,5 @@
 <template>
-  <span class="okBtn">
+  <span :class="`${type}Btn`">
       {{name}}
   </span>
 </template>
@@ -7,6 +7,10 @@
 export default {
     name: 'OtsButton',
     props: {
+        type: {
+            type: String,
+            default: 'ok'
+        },
         name: {
             type: String,
             default: '确定'
@@ -21,6 +25,15 @@ export default {
     border-radius: 4px;
     border: 1px solid rgba(231, 236, 241, 1);
     color: #fff;
+    cursor: pointer;
+}
+.cancelBtn {
+    padding: 8px 20px;
+    border-radius: 4px;
+    border: 1px solid #dde1ee;
+    color: #545f6a;
+    background: #fff;
+    box-shadow: 1px 1px 2px #dde1ee;
     cursor: pointer;
 }
 </style>

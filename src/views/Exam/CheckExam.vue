@@ -22,7 +22,9 @@
                 </div> -->
             </div>
             <div class="right">
-                <div id="cameraArea" class="camArea" v-if="isShowCamera"></div>
+                <!-- <div id="cameraArea" class="camArea" v-if="isShowCamera"></div> -->
+                <!-- <div  class="camArea" v-if="!isShowCamera"></div> -->
+                <camera-box class="camArea" v-if="isShowCamera" />
                 <video-list />
                 <div class="tika">
                     <div class="tishu">
@@ -68,7 +70,7 @@
             <div class="popConSlot">
                 <p class="col_red f20 fb tc mb10">注意：当前界面为考前检测界面，非正式考试！</p>
                 <p class="col_red f20 fb tc" v-show="countDown>0">{{`${countDown}秒后确定`}}</p>
-                <ots-button name="确定" v-show="countDown<=0" @click.native="isShowPop=false" />
+                <ots-button name="确定" v-show="countDown<=0" @click.native="closePop" />
             </div>
         </slot-pop>
     </div>
@@ -82,27 +84,29 @@ import Question from './components/Question'
 import SlotPop from '@/components/SlotPop.vue'
 import OtsButton from '@/components/Button/OtsButton.vue'
 import VideoList from '../../components/VideoList.vue'
+import CameraBox from '@/components/CameraBox.vue'
+import submit from '@/help/Exam/submitDeal'
 export default {
     name: 'CheckExam',
-    components: { Question, SlotPop, OtsButton, VideoList },
+    components: { Question, SlotPop, OtsButton, VideoList, CameraBox },
     data () {
         return {
-        isShowCamera: true,
-        isShowCheck: false,
-        isShowPop: true,
-        countDown: 5,
-        countTimer: null,
-        // 当前试题
-        currentQue: {},
-        // 当前index
-        currentIndex: -1,
-        // 原始试题包
-        questionBack: [],
-        // 一层试题包
-        questionList: [],
-        pageData: {
-            title: '123'
-        }
+            isShowCamera: true,
+            isShowCheck: false,
+            isShowPop: true,
+            countDown: 5,
+            countTimer: null,
+            // 当前试题
+            currentQue: {},
+            // 当前index
+            currentIndex: -1,
+            // 原始试题包
+            questionBack: [],
+            // 一层试题包
+            questionList: [],
+            pageData: {
+                title: '123'
+            }
         }
     },
     computed: {
@@ -140,8 +144,14 @@ export default {
         this.firstPop()
 
         // this.getVideo()
-
-        // window.OTS.GetCameraRectangle()
+        try {
+            console.log(1)
+            window.OTS.GetCameraRectangle()
+        } catch (e) {
+            console.log(e)
+            this.$message('摄像设备有问题，请调试好')
+        }
+        
     },
     methods: {
         initCheckData () {
@@ -227,20 +237,23 @@ export default {
             if (checkReault) {
                 // 这块用来跳转
                 let examPath = this.$route.query.examPath
-
+                // 先存一下是拍照还是活体
+                if (examPath.indexOf('Live') > 0) {
+                    window.localStorage.setItem('exmaCheckType', 'LiveTest')
+                } else {
+                    window.localStorage.setItem('exmaCheckType', 'PhotoTest')
+                }
                 // 开始检测页面
                 if (examPath === 'startLiveTest'
                     || examPath === 'startTakePhoto'
                 ) { 
                     this.$router.push({
                         name: 'startExam',
-                        query: {
-                            checkType: examPath
-                        }
+                        query: this.$route.query
                     })
                 }
                 // 开始检测结束去考试页
-                if (examPath === 'startPhotoExam') {
+                if (examPath === 'startPhotoExam' || examPath === 'startLiveExam') {
                     this.$router.push({
                         name: 'exam',
                         query: this.$route.query
@@ -250,12 +263,31 @@ export default {
                 if (examPath === 'endTakePhoto' 
                     || examPath === 'endLiveTest' 
                 ) {
+                    // 需要存一下答案 因为不跳考试页了
+                    window.localStorage.setItem('paperAnswer', this.getPaperAnswer())
                     this.$router.push({
                         name: 'endExam',
                     })
                 }
+                // 直接交卷
+                if (examPath == 'submitExam') {
+                    console.log(this.getPaperAnswer())
+                    submit(this.getPaperAnswer())
+                }
             }
             
+        },
+        getPaperAnswer () {
+            const paperData = JSON.parse(window.localStorage.getItem('paperData'))
+            const paperAnswer = {
+                arrangementId: paperData.arrangementId,
+                temp: 0,
+                sourceIp: paperData.sourcIp,  //undefined
+                answerPaperRecordId: paperData.answerPaperRecordId,
+                studentTestActivityScoreId: paperData.studentTestActivityScoreId,
+                paperAnswerResult: paperData.paperAnswerResult
+            }
+            return paperAnswer
         },
         goExamList () {
             this.$router.push({
@@ -280,6 +312,10 @@ export default {
                     clearInterval(this.countTimer)
                 }
             }, 1000)
+        },
+        closePop () {
+            this.isShowPop = false
+            // this.isShowCamera = true
         }
         
     },

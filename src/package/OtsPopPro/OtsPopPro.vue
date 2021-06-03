@@ -8,6 +8,7 @@
             :close-on-press-escape="false"
             :close-on-click-modal="false"
             :show-close="false"
+            center
         >
             <div>
                 <div class="popCon">
@@ -16,8 +17,8 @@
                 </div>
             </div>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="cancel">取 消</el-button>
-                <el-button type="primary" @click="okFn">确 定</el-button>
+                <el-button @click="cancel" v-show="config.isNeedCancel">{{config.cancelName}}</el-button>
+                <el-button type="primary" @click="okFn">{{config.okName}}</el-button>
             </span>
         </el-dialog>
     </div>
@@ -45,7 +46,10 @@ export default {
         return {
             dialogVisible: true,
             config: {
-                content: '确定要退出程序？'
+                isNeedCancel: true,
+                content: '确定要退出程序？',
+                cancelName: '取消',
+                okName: '确定'
             },
 
         }
@@ -58,7 +62,7 @@ export default {
 
             this.reject()
 
-            this.dialogVisible = false
+            this.resetConfig()
 
         },
         popInit (obj) {
@@ -78,8 +82,19 @@ export default {
 
             this.resolve()
 
-            this.dialogVisible = false
+            this.resetConfig()
 
+        },
+        resetConfig () {
+            this.dialogVisible = false
+            this.config = {
+                isNeedCancel: true,
+                content: '确定要退出程序？',
+                cancelName: '取消',
+                okName: '确定'
+            }
+            // 清除pop框
+            document.querySelector(`#pop_${this.count}`).remove()
         }
     }
 }
@@ -90,5 +105,6 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align: center;
 }
 </style>

@@ -1,13 +1,18 @@
 <template>
-    <div class="popBg" v-show="isShowPop">
+    <div class="popBg" v-if="isShowPop">
         <div class="noteBox col_grayZ">
             <div class="popTopLine">
                 <span class="f14">{{tipTitle}}</span>
             </div>
             <div class="popCon" v-html="examNote"></div>
             <div class="popFooter">
-                <span class="cancelBtn mr20" @click="$emit('cancel')">取消</span>
-                <span class="okBtn" @click="startExam">同意</span>
+                <template v-if="tipsCount > 0">
+                    <div>{{`${tipsCount}s`}}</div>
+                </template>
+                <template v-else>
+                    <span class="cancelBtn mr20" @click="$emit('cancel')">取消</span>
+                    <span class="okBtn" @click="startExam">同意</span>
+                </template>
             </div>
         </div>
     </div>
@@ -19,6 +24,8 @@ export default {
     props: [ 'currentExamInfo' ],
     data () {
         return {
+            tipsCount: 3,
+            tipsCountTimer: null,
             tipTitle: '',
             examNote: '',
             isShowPop: false
@@ -35,6 +42,7 @@ export default {
             this.examNote = data.examNote
             if (data.isShow) {
                 this.isShowPop = true
+                this.dealTipsCount()
             } else {
                 this.startExam()
             }
@@ -49,7 +57,18 @@ export default {
                     examPath: this.currentExamInfo.routePath
                 }
             })
+        },
+        dealTipsCount () {
+            this.tipsCountTimer = setInterval(() => {
+                this.tipsCount--
+                if (this.tipsCount <= 0) {
+                    clearInterval(this.tipsCountTimer)
+                }
+            }, 1000)
         }
+    },
+    beforeDestroy () {
+        clearInterval(this.tipsCountTimer)
     }
 }
 </script>

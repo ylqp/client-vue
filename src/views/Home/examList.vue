@@ -60,6 +60,7 @@ import TabsLine from './components/TabsLine'
 import { getStateRouter } from '@/help/HomeGoExam'
 import ExamNote from '../../components/ExamNote.vue'
 import Pay from './components/pay'
+import submit from '@/help/Exam/submitDeal'
 export default {
   name: 'ExamList',
   components: {
@@ -177,7 +178,9 @@ export default {
       }
       const { data } = await ifStartExam(params)
       console.log(data)
-      
+      // 存储试卷信息
+      window.localStorage.setItem("paperData", data.paperData);
+      // 跳转页面
       if (data.state === 0) {
 
           let routePath = getStateRouter(data.goWhere);
@@ -192,6 +195,23 @@ export default {
               this.payIds = examObj.testactivityarrangementid
               this.isShowPay = true
 
+          } else if (routePath === 'submitExam') {
+              this.$otsPopPro({
+                content: '本科目考试已超时不能继续作答，请确认交卷',
+                isNeedCancel: false
+              }).then(() => {
+                // 交卷
+                let paperData = JSON.parse(data.paperData)
+                let answer = {
+                    arrangementId: paperData.arrangementId,
+                    temp: 0,
+                    sourceIp: paperData.sourcIp,  //undefined
+                    answerPaperRecordId: paperData.answerPaperRecordId,
+                    studentTestActivityScoreId: paperData.studentTestActivityScoreId,
+                    paperAnswerResult: paperData.paperAnswerResult
+                }
+                submit(answer)
+              })
           } else {
 
               // 跳转放在考试须知里====同意即跳转
@@ -211,7 +231,6 @@ export default {
             }
           });
       } else if (data.state === 2) { // 先提示 再转跳==(暂时没有这种情况)
-
       }
     },
     showDetails (el) {

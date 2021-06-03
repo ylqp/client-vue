@@ -14,7 +14,14 @@ import {
     GetSchoolLogo,
     GetPreExamNote,
     MenuFunction,
-    GetIsClientLogin
+    GetIsClientLogin,
+    ResetAnswerPaperStartTime,
+    StartRec,
+    StopRec,
+    GETCORPUSCLECODEBYCLIENT,
+    FACECORPUSCLEBYCLIENT,
+    STARTRANDOMTAKEPHOTO,
+    ENDRANDOMTAKEPHOTO,
 } from '../api'
 // 获取学校logo
 export const getSchoolLogo = () => {
@@ -52,7 +59,7 @@ export const ifStartExam = (data) => {
 
 // 开始考试接口
 export const getExam = (isFace, data) => {
-    let interfaceUrl = isFace === 1 ? StartAnswerPaperWithPhoto : StartAnswerPaper
+    let interfaceUrl = isFace == 1 ? StartAnswerPaperWithPhoto : StartAnswerPaper
     return request(interfaceUrl, data)
 }
 
@@ -84,4 +91,35 @@ export const getNav = () => {
 // 获取是浏览器登录 还是  客户端登录
 export const getIsClientLogin = () => {
     return request(GetIsClientLogin)
+}
+
+// 考前拍照结束 重置考试时间
+export const resetAnswerPaperStartTime = (data) => {
+    return request(ResetAnswerPaperStartTime, data)
+}
+
+// 开始录制
+export const startRec = () => {
+    return request(StartRec)
+}
+// 结束录制
+export const stopRec  = (data) => {
+    return request(StopRec, data)
+}
+// 获取录制顺序
+export const getLiveInfo = (data) => {
+    return request(GETCORPUSCLECODEBYCLIENT, data)
+}
+// 比对活体检测方法
+export const faceLive = (data) => {
+    return request(FACECORPUSCLEBYCLIENT, data)
+}
+
+// 开始随机拍照
+export const openRandomCamera = () => {
+    return request(STARTRANDOMTAKEPHOTO)
+}
+// 关闭随机拍照
+export const closeRandomCamera = () => {
+    return request(ENDRANDOMTAKEPHOTO)
 }

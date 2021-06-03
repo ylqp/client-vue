@@ -2,7 +2,7 @@
     <div class="testLive">
         <div class="liveBox">
             <!-- <div class="live" id="cameraArea"></div> -->
-            <camera-box class="live" :IsLiveCheck="true" :IsFaceDetect="false" />
+            <camera-box class="live" :IsLiveCheck="true" :IsFaceDetect="false"/>
             <div class="liveBtn mt15" :class="isFreezeSumbit ? 'freeze' : ''" @click="startCheck">
                 <i class="iconfont icon-camera mr5"></i>
                 <span>开始检测</span>
@@ -18,6 +18,8 @@
 <script>
 import CameraBox from '../../../../components/CameraBox.vue'
 import { getLiveInfo, startRec, stopRec, faceLive } from '@/http/modules/common'
+import { takePhoto, hideCamera } from '@/http/modules/camera'
+
 export default {
     name: 'TakeLive',
     components: { CameraBox },
@@ -26,8 +28,7 @@ export default {
             isFreezeSumbit: false,
             tips: '请准备...',
             tipTimer: null,
-            param: {},
-            paperData: {}
+            param: {}
         }
     },
     created () {
@@ -36,12 +37,11 @@ export default {
     methods: {
         async initialFn () {
             const paperData = JSON.parse(window.localStorage.getItem('paperData'))
-            this.paperData = paperData
             //人脸识别参数
             this.param = {
                 arrangementId: paperData.arrangementId,//考试id
                 answerPaperId: paperData.answerPaperRecordId,//试卷id
-                type: 1,//1-开始 2-结束 3-进行中
+                type: 2,//1-开始 2-结束 3-进行中
                 basePhoto: paperData.userFaceImageUrl,
                 corpuscleCode: ""
             }
@@ -56,8 +56,8 @@ export default {
             // 置灰检测按钮
             this.isFreezeSumbit = true
             let corpuscleCode = this.param.corpuscleCode.split(",")
-            let readyNum = 10
-            let readyNum3 = 3
+            let readyNum = 10;
+            let readyNum3 = 3;
             let showTime = () => {
 
                 if (readyNum >= 8) {
@@ -83,6 +83,7 @@ export default {
                 }
                 readyNum--
             }
+            
             if (this.tipTimer !== null ) {
                  clearInterval(this.tipTimer)
                  this.tipTimer = null
@@ -92,7 +93,7 @@ export default {
         dealVideo () {
             stopRec(this.param)
                 .then(async ({ data }) => {
-                    await this.$camera.close()
+                    await hideCamera()
                     console.log(data)
                     // 处理视频结果即进行对比
                     return faceLive(JSON.parse(data))
@@ -101,23 +102,8 @@ export default {
                     console.log(JSON.parse(data))
                     data = JSON.parse(data)
                     let nextObj = {}
-                    if (data.photoBeginAboveThreeTimes && this.paperData.canNotEnterOverTimes == 1) {
-                        // 超过拍照次数  且 不通过不让考试
-                        nextObj.content = '<div>您的身份验证未通过 </div><div>不能进入考试！</div>'
-                        nextObj.isNeedCancel = false
-                        nextObj.okCallBack = () => {
-                            // 跳出检测
-                            this.goExamList()
-                        }
-                    } else if (data.photoBeginAboveThreeTimes) {
-                        nextObj.content = '<div class="tc">您的身份验证未通过 </div><div class="tc">将在人工审核之后确定本次考试成绩是否有效！</div>'
-                        nextObj.cancelName = '尝试再次验证'
-                        nextObj.okName = '确定是我本人'
-                        nextObj.okCallBack = () => {
-                            // 跳转考试页
-                            this.$emit('goNext', true)// 表示学生本人确认
-                        }
-                    } else if (data.photoBeginTest) {
+
+                    if (data.photoEndTest) {
                         nextObj.content = '请重新检测。'
                         nextObj.isNeedCancel = false
                         nextObj.okCallBack = () => {
@@ -211,5 +197,4 @@ export default {
         }
     }
 }
-
 </style>

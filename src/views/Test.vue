@@ -1,6 +1,6 @@
 <template>
   <div>
-        <search @on-click="searchFn"/>
+        <!-- <search @on-click="searchFn"/> -->
         <!-- <exam-note /> -->
         <!-- <slot-pop :isShowPop="isShowPop">
             <div class="popConSlot">
@@ -42,7 +42,8 @@
                 </figure> 
             </li> 
         </ul> -->
-        <video-list style="width: 300px" />
+        <!-- <video-list style="width: 300px" /> -->
+        <pop />
   </div>
 </template>
 <script>
@@ -51,8 +52,9 @@ import ExamNote from '../components/ExamNote.vue'
 import Search from '../components/Search.vue'
 import SlotPop from '../components/SlotPop.vue'
 import VideoList from '../components/VideoList.vue'
+import Pop from '../testComponents/pop.vue'
 export default {
-    components: { Search, ExamNote, SlotPop, OtsButton, VideoList },
+    components: { Search, ExamNote, SlotPop, OtsButton, VideoList, Pop },
     name: 'Test',
     data () {
         return {

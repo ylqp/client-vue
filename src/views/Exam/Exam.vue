@@ -12,8 +12,12 @@
         <div class="mainCon">
             <div class="left">
                 <div class="daBiaoTi mb20">
-                    <span class="f18 fb ml20 col_grayZ">{{`${currentQue.daBiaoTiNum}、${currentQue.daBiaoTiName}`}}</span>
+                    <span class="f18 fb ml20 col_grayZ mr15">{{`${currentQue.daBiaoTiNum}、${currentQue.daBiaoTiName}`}}</span>
                     <!-- 显示题目 小括号后边的东西 -->
+                    <span class="col_grayQ">(</span>
+                    <span class="col_grayQ">{{`共${currentQue.totalquestion}道小题，共${currentQue.totalscore}分`}}</span>
+                    <span class="col_grayQ" v-show="currentQue.comment">{{currentQue.comment}}</span>
+                    <span class="col_grayQ">)</span>
                 </div>
                 <div class="queArea">
                     <Question :queItem="currentQue" :isFlex="true" />
@@ -23,7 +27,8 @@
                 </div>
             </div>
             <div class="right">
-                <div id="cameraArea" class="camArea" v-if="isShowCamera"></div>
+                <!-- <div id="cameraArea" class="camArea" v-if="isShowCamera"></div> -->
+                <camera-box  class="camArea" v-if="isShowCamera" />
                 <div class="tika">
                     <div class="time" v-if="isShowTime">
                         <img src="@/assets/images/time.png" class="mr5" />
@@ -72,30 +77,48 @@
         <!-- 开始弹窗 -->
         <slot-pop :isShowPop="isShowPop">
             <div class="popConSlot">
-                <p class="col_blue f20 fb tc mb10">确定退出考试？</p>
-                <!-- <p class="col_red f20 fb tc" v-show="countDown>0">{{`${countDown}秒后确定`}}</p> 
-                <ots-button name="确定" v-show="countDown<=0" @click.native="isShowPop=false" />-->
-                <ots-button name="确定"  @click.native="isShowPop=false" />
+                <template v-if="isStart && isTipsPop">
+                    <p class="col_red f20 fb tc mb10">注意：考试已经开始，请<span>{{haveTime}}</span>分钟内提交！</p>
+                    <p class="col_red f20 fb tc mt10 mb20" v-if="startCount>0"><span>{{startCount}}</span>秒后关闭</p>
+                    <ots-button class="mt20" v-else name="确定"  @click.native="popOkFn('start')" />
+                </template>
+                <template v-else>
+                    <p class="col_blue f20 fb tc mb10">确定退出考试？</p>
+                    <p class="col_red f20 fb tc mb10" v-if="isTipsPop">请在<span>{{limitTime}}</span>之前点击交卷按钮完成考试！</p>
+                    <div class="popBtnLine">
+                        <ots-button name="取消" type="cancel"  @click.native="isShowPop = false" />
+                        <ots-button name="确定"  @click.native="popOkFn()" />  
+                    </div>
+                </template>
+                
             </div>
         </slot-pop>
     </div>
 </template>
 <script>
 import Question from './components/Question'
-import { getExam, submitExam, tempSave, ifStartExam, getIsClientLogin } from '@/http/modules/common'
+import { getExam, submitExam, tempSave, ifStartExam, getIsClientLogin, openRandomCamera, closeRandomCamera } from '@/http/modules/common'
 import { dealQueItemAnswer, mountQueItemAnswer, copyPageData, getExamFlag } from '@/help/Exam/index'
 import { exitClient } from '@/http/modules/close'
 import SlotPop from '../../components/SlotPop.vue'
 import OtsButton from '../../components/Button/OtsButton.vue'
+import CameraBox from '../../components/CameraBox.vue'
 export default {
     name: 'Exam',
     components: {
         Question,
         SlotPop,
         OtsButton,
+        CameraBox,
     },
     data () {
         return {
+            isStart: true,
+            isTipsPop: false,
+            haveTime: 0,
+            startCount: 6,
+            startCountTimer: null,
+            limitTime: '',
             isShowPop: false,
             text: 1,
             isShowCamera: false,
@@ -145,21 +168,26 @@ export default {
 		    	return item.webData.isAnswer
 		    })
         })
-        
+        // 是否人脸识别
+        this.isShowCamera = this.$route.query.isFace == 1 ? true : false
+        // 开始随机拍照处理
+        this.dealRandomCamera()
     },
     methods: {
         /**
          * 处理开始考试接口
          */
         async getExamInfo () {
+            
+            
             // 判断可否考试（删）
-            let params = {
-                isFaceTest: this.$route.query.isFace,
-                arrangementId: this.$route.query.eid
-            }
-            const { cdata } = await ifStartExam(params)
+            // let params = {
+            //     isFaceTest: this.$route.query.isFace,
+            //     arrangementId: this.$route.query.eid
+            // }
+            // const { cdata } = await ifStartExam(params)
             // console.log(cdata)
-
+            console.log(this.$route.query.isFace)
             const { data } = await getExam(this.$route.query.isFace, {arrangementId: this.$route.query.eid})
             let examInfo = JSON.parse(data)
 
@@ -277,7 +305,7 @@ export default {
                 this.$otsPopPro({
                     content: '你有未答试题，确定交卷吗？',
                 }).then(() => {
-                    this.submit(0)
+                    this.goNextRoute()
                 }).catch(() => {
 
                 })
@@ -285,11 +313,27 @@ export default {
                 this.$otsPopPro({
                     content: '交卷后不能对试卷进行修改，确认交卷？',
                 }).then(() => {
-                    this.submit(0)
+                    this.goNextRoute()
                 }).catch(() => {
                             
                 })
             }   
+        },
+        goNextRoute () {
+            console.log(this.pageData)
+            // 如果需要拍照
+            if (this.pageData.photoEndTest) {
+                // 提交考试的参数
+                const params = this.getSubmitParams(0)
+                window.localStorage.setItem('paperAnswer', JSON.stringify(params))
+                this.$router.push({
+                    name: 'endExam',
+                    query: this.$route.query
+                })
+            } else {
+                // 不需要则直接提交
+                this.submit(0)
+            }
         },
         async submit (type) {
             // 提交考试的参数
@@ -358,6 +402,26 @@ export default {
             this.dealCountdown ()
             // 开启临时保存
             this.tempSaveFn()
+            // 开启提示
+            this.startOrExitTips()
+        },
+        startOrExitTips () {
+            if (this.pageData.timeLimitEnabled && this.pageData.paperTime > 0) {
+                let haveTime = parseInt(this.pageData.paperTime - (this.pageData.useTime / 60))
+                this.haveTime = haveTime == 0 ? 1 : haveTime
+                this.isShowPop = true
+                this.isTipsPop = true
+                this.startCountTimer = setInterval(() => {
+                    this.startCount--
+                    if (this.startCount <= 0) {
+                        clearInterval(this.startCountTimer)
+                        this.startCountTimer = null
+                    }
+                }, 1000)
+                this.getLimitTime()
+			} else {
+				console.log('不需要提示')
+			}
         },
         tempSaveFn () {
             if (this.pageData.tempSaveAnswer) {
@@ -368,7 +432,7 @@ export default {
         /**
          * 临时保存调用
          */
-        async doTempSaveFn () {
+        doTempSaveFn () {
             
             // 提交考试的参数
             const params = this.getSubmitParams(1)
@@ -381,14 +445,15 @@ export default {
                 tempSaveAnswerExpire: params.tempSaveAnswerExpire
             }
             console.log(oInterParam)
-            const { data } = await tempSave (oInterParam)
+            // const { data } = await tempSave (oInterParam)
+            return tempSave (oInterParam)
         },
         /**
          * 处理倒计时
          */
         dealCountdown () {
 			if (this.pageData.timeLimitEnabled && this.pageData.paperTime > 0) {
-				this.Univertimer(this.pageData.paperTime * 60 - this.pageData.useTime);
+				this.Univertimer(this.pageData.paperTime * 60 - this.pageData.useTime)
                 let haveTime = this.pageData.paperTime * 60 - this.pageData.useTime
 			} else {
 				console.log('不需要倒计时')
@@ -396,19 +461,20 @@ export default {
 			}
 		},
         getLimitTime () {
-            let t = new Date();//你已知的时间
-            var t_s = t.getTime();//转化为时间戳毫秒数
+            let t = new Date()//你已知的时间
+            let t_s = t.getTime()//转化为时间戳毫秒数
+            let havetime = parseInt(this.pageData.paperTime * 60 - this.pageData.useTime)
+            t.setTime(t_s + havetime * 1000)//设置新时间比旧时间多一分钟
 
-            t.setTime(t_s + havetime * 1000);//设置新时间比旧时间多一分钟
+            let oYear = t.getFullYear()
+            let oMonth = t.getMonth() + 1 < 10 ? "0" + (t.getMonth() + 1) : (t.getMonth() + 1)
+            let oDay = t.getDate() < 10 ? "0" + t.getDate() : t.getDate()
+            let oHour = t.getHours() < 10 ? "0" + t.getHours() : t.getHours()
+            let oMinute = t.getMinutes() < 10 ? "0" + t.getMinutes() : t.getMinutes()
+            let oSecond = t.getSeconds() < 10 ? "0" + t.getSeconds() : t.getSeconds()
 
-            var oYear = t.getFullYear();
-            var oMonth = t.getMonth() + 1 < 10 ? "0" + (t.getMonth() + 1) : (t.getMonth() + 1);
-            var oDay = t.getDate() < 10 ? "0" + t.getDate() : t.getDate();
-            var oHour = t.getHours() < 10 ? "0" + t.getHours() : t.getHours();
-            var oMinute = t.getMinutes() < 10 ? "0" + t.getMinutes() : t.getMinutes();
-            var oSecond = t.getSeconds() < 10 ? "0" + t.getSeconds() : t.getSeconds();
-
-            oTime = oYear + '-' + oMonth + '-' + oDay + " " + oHour + ":" + oMinute + ":" + oSecond;//最后拼接时间
+            let oTime = oYear + '-' + oMonth + '-' + oDay + " " + oHour + ":" + oMinute + ":" + oSecond;//最后拼接时间
+            this.limitTime = oTime
         },
         Univertimer (intDiff) {
 
@@ -426,7 +492,7 @@ export default {
                 if (second <= 9) second = '0' + second;
                 // $('.sDate').html(minute + ':' + second);
                 that.pageData.countDownTime = minute + ':' + second;
-                console.log(that.pageData.countDownTime)
+                // console.log(that.pageData.countDownTime)
                 if (intDiff <= 0) {
 
                 	console.log('倒计时完成');
@@ -441,21 +507,45 @@ export default {
          * 退出考试
          */
         exitExam () {
-            this.$otsPopPro({
-                content: '确定退出考试',
-            }).then(() => {
-                this.goExamList()
-            })
+            // this.$otsPopPro({
+            //     content: '确定退出考试?',
+            // }).then(() => {
+            //     this.goExamList()
+            // })
+            this.isShowPop = true
         },
         goExamList () {
             this.$router.push({
                 name: 'examList'
             })
+        },
+        dealRandomCamera () {
+            if (!this.isShowCamera) {
+                return
+            }
+            // 开启随机拍照
+            openRandomCamera()
+        },
+        popOkFn (type) {
+            this.isShowPop = false
+            if (type == 'start') {
+                this.isStart = false
+            } else {
+                this.goExamList()
+            }
         }
     },
     beforeDestroy () {
         clearInterval(this.pageData.countDownTimer)
         clearInterval(this.pageData.tempTimer)
+        clearInterval(this.startCountTimer)
+        // 执行一次临时保存
+        this.doTempSaveFn().then(() => {
+            if (this.isShowCamera) { // 关闭随机拍照
+                console.log('关闭随机拍照')
+                closeRandomCamera()
+            }
+        })
     },
     watch: {
         currentIndex: {
@@ -551,6 +641,7 @@ export default {
                 box-shadow: 0px 2px 6px 0px rgb(234 235 236);
                 border-radius: 2px;
                 height: calc(100% - 175px);
+                position: relative;
                 .time {
                     height: 60px;
                     border-bottom: 1px solid rgba(231, 236, 241, 1);
@@ -632,6 +723,9 @@ export default {
                     flex-direction: column;
                     justify-content: center;
                     align-items: center;
+                    position: absolute;
+                    width: 100%;
+                    bottom: 0;
                     .submitBtn {
                         width: 150px;
                         height: 40px;
@@ -664,5 +758,11 @@ export default {
         display: flex;
         flex-direction: column;
         align-items: center;
+        .popBtnLine {
+            display: flex;
+            width: 280px;
+            margin: 10px auto;
+            justify-content: space-around;
+        }
     }
 </style>

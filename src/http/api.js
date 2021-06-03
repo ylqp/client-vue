@@ -34,6 +34,8 @@ export const SubmitAnswerPaper = 'SubmitAnswerPaper'
 export const QueryAnswerPaperDetails = 'QueryAnswerPaperDetails'
 // 获取考试须知
 export const GetPreExamNote = 'GetPreExamNote'
+// 考前拍照重置时间
+export const ResetAnswerPaperStartTime = 'ResetAnswerPaperStartTime'
 
 // 获取已支付列表
 export const QueryStudentPaymentBillByConditions = 'QueryStudentPaymentBillByConditions'
@@ -63,9 +65,24 @@ export const OtsClientGetFileUrl = 'OtsClientGetFileUrl'
 export const GetVideoList = 'GetVideoList'
 // 选择摄像头
 export const SelectVideo = 'SelectVideo'
-// 获取摄像头框
-export const GetCameraRectangle = 'GetCameraRectangle'
 // 隐藏摄像头
 export const HideCamera = 'HideCamera'
+// 设置摄像头参数
+export const SetCameraConfig = 'SetCameraConfig'
+// 拍照接口
+export const TAKEPHOTOFACECOMPARE = 'TAKEPHOTOFACECOMPARE'
+// 关闭摄像头
+export const CLOSECAMERA = 'CLOSECAMERA'
+// 开始录像
+export const StartRec = 'StartRec'
+// 停止录像
+export const StopRec = 'StopRec'
+// 获取活体检测的一些配置
+export const GETCORPUSCLECODEBYCLIENT = 'GETCORPUSCLECODEBYCLIENT'
+// 活体检测对比接口
+export const FACECORPUSCLEBYCLIENT = 'FACECORPUSCLEBYCLIENT'
 
-
+// 随机拍照开始 （完整的进入到考试页面并且有倒计时的那种考试哈调用一下）
+export const STARTRANDOMTAKEPHOTO = 'STARTRANDOMTAKEPHOTO'
+// 随机拍照结束 （退出考试 交卷  和返回到列表都调用一下的）
+export const ENDRANDOMTAKEPHOTO = 'ENDRANDOMTAKEPHOTO'
