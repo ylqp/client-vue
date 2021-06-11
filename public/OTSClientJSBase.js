@@ -5,6 +5,29 @@ var OTS = {
     SetOtsHost: {},
     SetFormIsShow: {},
     SetCheckState: {},
+     OtsMessage: function(msg) {
+        var base64data = new OTS.Base64();
+        var _msg = base64data.decode(msg)
+        window.WEBOTS.$otsMessage({content: _msg,type:"warning",title:"警告"})
+
+
+     },
+     OtsPopPro: function(msg) {
+        var base64data = new OTS.Base64();
+        var _msg = base64data.decode(msg)
+        window.WEBOTS.$otsPopPro({content: _msg})
+     }, 
+     
+     OIMFun:function(config) {
+        // var base64data = new OTS.Base64();
+        // var _msg = base64data.decode(msg)
+        // window.WEBOTS.$otsPopPro({content: config.})
+        // window.WEBOTS.$client.submit()
+
+     },
+
+     
+    
     GetCameraRectangle: function (data) { 
             setTimeout(function () {
                 var cameraObject = $("#cameraArea");
@@ -20,7 +43,7 @@ var OTS = {
                     CameraRectangle.Width = $("#cameraArea").width();
                     CameraRectangle.Height = $("#cameraArea").height();
                     OTS.Sent("GetCameraRectangle", CameraRectangle, null, function (data) {
-                        setTimeout(function () { try { $('.picBtn').removeClass('grayNone'); } catch (e) { } }, 2500);
+                        //setTimeout(function () { try { $('.picBtn').removeClass('grayNone'); } catch (e) { } }, 2500);
                     }, null);
                 }
             }, 10);

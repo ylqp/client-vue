@@ -3,9 +3,9 @@
         <div class="top">
             <div class="title f22">{{pageData.title}}</div>
             <div class="exit">
-                <div class="exitBtn">
+                <div class="exitBtn" @click="exitExam">
                     <i class="iconfont icon-exit02 f14"></i>
-                    <span class="ml5" @click="exitExam">退出考试</span>
+                    <span class="ml5">退出考试</span>
                 </div>
             </div>
         </div>
@@ -84,7 +84,8 @@
                             <i class="iconfont icon-tijiao"></i>
                             <span class="ml10">交卷</span>
                         </div>
-                        <div class="helpLink">考试遇到问题？</div>
+                        <!-- <div class="helpLink">考试遇到问题？</div> -->
+                        <help-pop />
                     </div>
                 </div>
             </div>
@@ -108,6 +109,7 @@ import { exitClient } from '@/http/modules/close'
 import SlotPop from '../../components/SlotPop.vue'
 import OtsButton from '../../components/Button/OtsButton.vue'
 import CameraUpload from '@/components/CameraUpload.vue'
+import HelpPop from '../../components/HelpPop.vue'
 
 export default {
     name: 'ExamDa',
@@ -115,7 +117,8 @@ export default {
         Question,
         SlotPop,
         OtsButton,
-        CameraUpload
+        CameraUpload,
+        HelpPop
     },
     data () {
         return {
@@ -513,13 +516,11 @@ export default {
             this.$otsPopPro({
                 content: '确定退出考试',
             }).then(() => {
-                this.goExamList()
+                this.$client.goHome()
             })
         },
         goExamList () {
-            this.$router.push({
-                name: 'examList'
-            })
+            this.$client.goHome()
         },
         getImgUrl (img) {
             this.answerImgList.push(img)

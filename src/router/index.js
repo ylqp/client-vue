@@ -48,6 +48,14 @@ const routes = [
     ]
   },
   {
+    path: '/otherlogin',
+    name: 'otherLogin',
+    meta: {
+      title: '拉起程序'
+    },
+    component: () => import('../views/Home/OtherLogin.vue')
+  },
+  {
     path: '/check',
     name: 'checkExam',
     meta: {

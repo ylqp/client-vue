@@ -44,7 +44,7 @@
 <script>
 import TopLine from './components/TopLine'
 import TabsLine from './components/TabsLine'
-import { getMsgList } from '@/http/modules/msg'
+import { getMsgList, readMsg } from '@/http/modules/msg'
 export default {
     name: 'MsgList',
     components: {
@@ -79,7 +79,7 @@ export default {
     },
     methods: {
       async getMsgs () {
-        console.log(JSON.stringify(this.msgListParams) )
+        console.log(JSON.stringify(this.msgListParams))
         const  { data }  = await getMsgList(this.msgListParams)
         let msgData = JSON.parse(data)
         console.log(msgData)
@@ -121,6 +121,17 @@ export default {
             this.$message('已经是最后一条啦~')
           }
         }
+      },
+      dealReadMsg (id) {
+          readMsg({messageId: id})
+      }
+    },
+    watch: {
+      currentMsgItem: {
+        handler: (newVal, oldVal) => {
+          readMsg({messageId: newVal.messageId})
+        },
+        deep: true
       }
     }
 }

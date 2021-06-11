@@ -67,9 +67,7 @@ export default {
             }
         },
         goExamList () {
-            this.$router.push({
-                name: 'examList'
-            })
+            this.$client.goHome()
         }
     },
     beforeDestroy () {

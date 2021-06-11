@@ -11,7 +11,7 @@ import '@/assets/style/common.css'
 Vue.config.productionTip = false
 Vue.prototype.$eventBus = new Vue()
 Vue.prototype.$camera = camera
-// Vue.prototype.$client = client
+Vue.prototype.$client = client
 Vue.use(plugins)
 window.WEBOTS = new Vue({
   router,

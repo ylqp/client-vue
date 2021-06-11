@@ -68,8 +68,9 @@
   </div>
 </template>
 <script>
-import { login, getCheckCode } from '@/http/modules/login'
+import { login, getCheckCode, otherLogin, checkStart } from '@/http/modules/login'
 import { getTenate, getSchoolLogo } from '@/http/modules/common'
+import { loginMsg } from '@/http/modules/msg'
 import { mapActions, mapState } from 'vuex'
 import Close from '@/components/Close.vue'
 import doubleTenant from '@/config/loginTenant'
@@ -133,10 +134,38 @@ export default {
   },
   created () {
     this.getLogo()
+    this.openMsg()
   },
   methods: {
     ...mapActions('user', ['getUserFPSettings']),
     ...mapActions('examType', ['geExamTypeList']),
+    async dealOtherLogin () {
+        let { data: loginData} = await checkStart()
+        loginData = JSON.parse(loginData)
+        // 考试活动id
+        let eid = loginData.arrangementId
+        if (loginData.isClientLogin == true) { // 业务线拉起
+            // 获取用户信息
+            await this.getUserFPSettings()
+            // return
+            const { data } = await otherLogin()
+            console.log('other', data)
+            if (data.succeeded) {
+              this.$router.push({
+                name: 'otherLogin',
+                query: {
+                  eid: eid
+                }
+              })
+            } else {
+
+            }
+        }
+    },
+    async openMsg () {
+      await loginMsg()
+      this.dealOtherLogin()
+    },
     async loginIn () {
       // this.$otsMessage({
       //   content : '测试message',
@@ -187,7 +216,7 @@ export default {
       this.checkCodeImg = 'data:image/png;base64,' + data
     },
     getLoginStatus (reason) {
-      return loginStatus[reason] || '登录失败，请联系管理员'
+      return loginStatus[reason] || reason || '登录失败，请联系管理员'
     },
     async getLogo () {
       const { data } = await getSchoolLogo()

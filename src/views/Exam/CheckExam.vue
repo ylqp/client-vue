@@ -3,10 +3,11 @@
         <div class="top">
             <div class="title f22 col_red">环境测试，非正式考试</div>
             <div class="exit">
-                <div class="exitBtn">
+                <!-- <div class="exitBtn" @click="goExamList">
                     <i class="iconfont icon-exit02 f14"></i>
-                    <span class="ml5" @click="goExamList">退出检测</span>
-                </div>
+                    <span class="ml5">退出检测</span>
+                </div> -->
+                <exit-exam name="退出检测"/>
             </div>
         </div>
         <div class="mainCon">
@@ -25,7 +26,7 @@
                 <!-- <div id="cameraArea" class="camArea" v-if="isShowCamera"></div> -->
                 <!-- <div  class="camArea" v-if="!isShowCamera"></div> -->
                 <camera-box class="camArea" v-if="isShowCamera" />
-                <video-list />
+                <video-list v-if="isShowCamera" />
                 <div class="tika">
                     <div class="tishu">
                         <img src="@/assets/images/tika.png" class="mr5" />
@@ -60,7 +61,8 @@
                             <i class="iconfont icon-tijiao"></i>
                             <span class="ml10 f14">提交并正式考试</span>
                         </div>
-                        <div class="helpLink">考试遇到问题？</div>
+                        <!-- <div class="helpLink">考试遇到问题？</div> -->
+                        <help-pop />
                     </div>
                 </div>
             </div>
@@ -86,12 +88,14 @@ import OtsButton from '@/components/Button/OtsButton.vue'
 import VideoList from '../../components/VideoList.vue'
 import CameraBox from '@/components/CameraBox.vue'
 import submit from '@/help/Exam/submitDeal'
+import HelpPop from '../../components/HelpPop.vue'
+import ExitExam from './components/ExitExam.vue'
 export default {
     name: 'CheckExam',
-    components: { Question, SlotPop, OtsButton, VideoList, CameraBox },
+    components: { Question, SlotPop, OtsButton, VideoList, CameraBox, HelpPop, ExitExam },
     data () {
         return {
-            isShowCamera: true,
+            isShowCamera: false,
             isShowCheck: false,
             isShowPop: true,
             countDown: 5,
@@ -155,7 +159,7 @@ export default {
     },
     methods: {
         initCheckData () {
-            
+            this.isShowCamera = true
             let tenant = this.userFPSettings.tenant ? this.userFPSettings.tenant : 'cate'
             let dataStr = checkData[`${tenant}_dataSource`] ? checkData[`${tenant}_dataSource`] : checkData[`dataSource`]
             let examInfo = JSON.parse(dataStr).data
@@ -290,9 +294,7 @@ export default {
             return paperAnswer
         },
         goExamList () {
-            this.$router.push({
-                name: 'examList'
-            })
+            this.$client.goHome()
         },
         submitExamFn () {
 

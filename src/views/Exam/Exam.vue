@@ -3,13 +3,13 @@
         <div class="top">
             <div class="title f22">{{pageData.title}}</div>
             <div class="exit">
-                <div class="exitBtn">
+                <div class="exitBtn" @click="exitExam">
                     <i class="iconfont icon-exit02 f14"></i>
-                    <span class="ml5" @click="exitExam">退出考试</span>
+                    <span class="ml5">退出考试</span>
                 </div>
             </div>
         </div>
-        <div class="mainCon">
+        <div class="mainCon" v-if="questionBack.length">
             <div class="left">
                 <div class="daBiaoTi mb20">
                     <span class="f18 fb ml20 col_grayZ mr15">{{`${currentQue.daBiaoTiNum}、${currentQue.daBiaoTiName}`}}</span>
@@ -69,7 +69,8 @@
                             <i class="iconfont icon-tijiao"></i>
                             <span class="ml10">交卷</span>
                         </div>
-                        <div class="helpLink">考试遇到问题？</div>
+                        <!-- <div class="helpLink">考试遇到问题？</div> -->
+                        <help-pop />
                     </div>
                 </div>
             </div>
@@ -96,13 +97,16 @@
     </div>
 </template>
 <script>
-import Question from './components/Question'
+import watermark from '@/plugins/shuiyin'
 import { getExam, submitExam, tempSave, ifStartExam, getIsClientLogin, openRandomCamera, closeRandomCamera } from '@/http/modules/common'
 import { dealQueItemAnswer, mountQueItemAnswer, copyPageData, getExamFlag } from '@/help/Exam/index'
 import { exitClient } from '@/http/modules/close'
 import SlotPop from '../../components/SlotPop.vue'
 import OtsButton from '../../components/Button/OtsButton.vue'
 import CameraBox from '../../components/CameraBox.vue'
+import HelpPop from '../../components/HelpPop.vue'
+import Question from './components/Question'
+import { mapState } from 'vuex'
 export default {
     name: 'Exam',
     components: {
@@ -110,6 +114,7 @@ export default {
         SlotPop,
         OtsButton,
         CameraBox,
+        HelpPop,
     },
     data () {
         return {
@@ -149,6 +154,7 @@ export default {
         }
     },
     computed: {
+        ...mapState('user', ['userFPSettings']),
         doneQues () {
             return this.questionList.filter(item => item.webData.isAnswer)
         }
@@ -156,6 +162,7 @@ export default {
     created () {
         // console.log(this.$route.query)
         this.getExamInfo()
+        window.WEBOTS.$client.submit = this.goNextRoute
     },
     mounted () {
         // 处理复合题isAnswer
@@ -172,6 +179,9 @@ export default {
         this.isShowCamera = this.$route.query.isFace == 1 ? true : false
         // 开始随机拍照处理
         this.dealRandomCamera()
+        // 处理水印
+        // console.log('watermark_txt', this.userFPSettings)
+        // watermark.show({"watermark_txt": '1jjjjjjjjjjjjjjjjjjjjjj'})
     },
     methods: {
         /**
@@ -190,7 +200,6 @@ export default {
             console.log(this.$route.query.isFace)
             const { data } = await getExam(this.$route.query.isFace, {arrangementId: this.$route.query.eid})
             let examInfo = JSON.parse(data)
-
             // 验证是否可以正常考试
             const examFlag = getExamFlag(examInfo.answerPaperFlag);
             if (!examFlag.isAnswer) { // 提示信息
@@ -229,13 +238,16 @@ export default {
              */
             let questionBack = examInfo.paper.psOutputDto ? examInfo.paper.psOutputDto : []
             questionBack = questionBack.filter(item => item.paperQuestionList)
-
+            console.log('questionBack',questionBack)
             questionBack.forEach(item => {// 大题结构
                 item.paperQuestionList.forEach((questionItem) => { // 单题
                     /**
                      * 将大题信息挂载到每到题目上
                      */
+                    
+
                     questionItem.daBiaoTiNum = item.sequencenumber;  //第几道大题
+                    
                     questionItem.daBiaoTiName = item.name;  //第几道大题
                     questionItem.totalscore = item.totalscore; //共几分
                     questionItem.totalquestion = item.totalquestion;//共有几道题
@@ -270,7 +282,10 @@ export default {
             // 赋值给
             this.questionBack = questionBack
             // 展示第一道题
+            
             this.currentIndex = 0
+            
+            
             // console.log(this.questionList)
             /**
              * 考试配置项处理=====>倒计时 临时保存 水印  等
@@ -320,20 +335,21 @@ export default {
             }   
         },
         goNextRoute () {
-            console.log(this.pageData)
-            // 如果需要拍照
-            if (this.pageData.photoEndTest) {
-                // 提交考试的参数
-                const params = this.getSubmitParams(0)
-                window.localStorage.setItem('paperAnswer', JSON.stringify(params))
-                this.$router.push({
-                    name: 'endExam',
-                    query: this.$route.query
-                })
-            } else {
-                // 不需要则直接提交
-                this.submit(0)
-            }
+            this.doTempSaveFn().then(() => {
+                // 如果需要拍照
+                if (this.pageData.photoEndTest) {
+                    // 提交考试的参数
+                    const params = this.getSubmitParams(0)
+                    window.localStorage.setItem('paperAnswer', JSON.stringify(params))
+                    this.$router.push({
+                        name: 'endExam',
+                        query: this.$route.query
+                    })
+                } else {
+                    // 不需要则直接提交
+                    this.submit(0)
+                }
+            })
         },
         async submit (type) {
             // 提交考试的参数
@@ -478,27 +494,28 @@ export default {
         },
         Univertimer (intDiff) {
 
-            this.pageData.countDownTimer = setInterval(mytimer, 1000);
+            this.pageData.countDownTimer = setInterval(mytimer, 1000)
             let that = this
             function mytimer() {
                 
                 var minute = 0,
                     second = 0; //时间默认值        
                 if (intDiff > 0) {
-                    minute = Math.floor(intDiff / 60);
-                    second = Math.floor(intDiff) - (minute * 60);
+                    minute = Math.floor(intDiff / 60)
+                    second = Math.floor(intDiff) - (minute * 60)
                 }
-                if (minute <= 9) minute = '0' + minute;
-                if (second <= 9) second = '0' + second;
+                if (minute <= 9) minute = '0' + minute
+                if (second <= 9) second = '0' + second
                 // $('.sDate').html(minute + ':' + second);
-                that.pageData.countDownTime = minute + ':' + second;
+                that.pageData.countDownTime = minute + ':' + second
                 // console.log(that.pageData.countDownTime)
                 if (intDiff <= 0) {
 
-                	console.log('倒计时完成');
-                	clearInterval(that.pageData.countDownTimer);
+                	console.log('倒计时完成')
+                	clearInterval(that.pageData.countDownTimer)
                     // 自动提交
-                	
+                    that.$otsMessage({content: "考试结束，请验证提交。"})
+                	that.goNextRoute()
                 }
                 intDiff--;
             };
@@ -507,16 +524,11 @@ export default {
          * 退出考试
          */
         exitExam () {
-            // this.$otsPopPro({
-            //     content: '确定退出考试?',
-            // }).then(() => {
-            //     this.goExamList()
-            // })
             this.isShowPop = true
         },
         goExamList () {
-            this.$router.push({
-                name: 'examList'
+            this.doTempSaveFn().then(() => {
+                this.$client.goHome()
             })
         },
         dealRandomCamera () {
@@ -539,6 +551,8 @@ export default {
         clearInterval(this.pageData.countDownTimer)
         clearInterval(this.pageData.tempTimer)
         clearInterval(this.startCountTimer)
+        // 清除水印
+        watermark.clear()
         // 执行一次临时保存
         this.doTempSaveFn().then(() => {
             if (this.isShowCamera) { // 关闭随机拍照
@@ -546,6 +560,7 @@ export default {
                 closeRandomCamera()
             }
         })
+        window.WEBOTS.$client.submit = null
     },
     watch: {
         currentIndex: {

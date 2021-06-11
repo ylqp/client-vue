@@ -46,6 +46,7 @@
           >
             <i class="iconfont icon-msg"></i>
             <p>消息中心</p>
+            <div class="msgCount" v-show="msgCount"></div>
           </div>
         </li>
         <li v-if="isOpenPay">
@@ -63,13 +64,7 @@
         <li v-for="(item, index) in examTypes" :key="item.id">
           <div  class="tabItem"
                 :class="that.$route.name === 'examList' && that.$route.params.id === item.id ? 'on' : ''"
-                @click="$router.push({
-                  name: 'examList',
-                  params: {
-                    id: item.id,
-                    takePhotoInTest: item.takePhotoInTest
-                  }
-                })"
+                @click="getExamList(item)"
           >
             <i class="iconfont" :class="index % 2 === 0 ? 'icon-zuoye' : 'icon-kaoshi' "></i>
             <p>{{item.activityTypeName}}</p>
@@ -85,6 +80,7 @@
 <script>
 import { mapState } from 'vuex'
 import { getUserSimpleInfo, getExamType, getNav } from '@/http/modules/common'
+import { navMsg, countMsg } from '@/http/modules/msg'
 export default {
     name: 'Nav',
     data () {
@@ -94,6 +90,8 @@ export default {
             that: {},
             isOpenMessage: false,
             isOpenPay: false,
+            msgTimer: null,
+            msgCount: false
         }
     },
     computed: {
@@ -119,6 +117,19 @@ export default {
         // console.log(navInfo)
         this.isOpenMessage = navInfo.isOpenMessage
         this.isOpenPay = navInfo.isOpenPay
+        
+        // 处理消息轮询
+        if (this.isOpenMessage) {
+            // 先执行一次
+            this.dealMsgCount()
+            this.msgTimer = setInterval(this.dealMsgCount, 300000)//5分钟轮询一次
+        }
+      },
+      async dealMsgCount () {
+          const { data } = await countMsg()
+          if (parseInt(data) > 0) {
+            this.msgCount = true
+          }
       },
       goLogin () {
         this.$otsPop({
@@ -129,6 +140,19 @@ export default {
             })
           }
         })
+      },
+      getExamList (item) {
+          this.$router.push({
+              name: 'examList',
+              params: {
+                id: item.id,
+                takePhotoInTest: item.takePhotoInTest
+              }
+          })
+          window.localStorage.setItem('examTypeId', item.id)
+      },
+      async openMsg () {
+        await navMsg()
       }
     },
     created () {
@@ -136,9 +160,15 @@ export default {
       this.getInfo()
       this.getExamInfo(this.userFPSettings.userId)
       this.getNavFlag()
+      this.openMsg()
     },
     mounted () {
         // console.log(this.userFPSettings)
+    },
+    beforeDestroy () {
+      if (!this.msgTimer) {
+        clearInterval(this.msgTimer)
+      }
     }
 }
 </script>
@@ -269,5 +299,13 @@ export default {
   }
   .tabItem.on {
     background-color: rgba(255, 255, 255, 0.12);
+  }
+  .msgCount{
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #ff4444;
+    margin-left: 5px;
+    margin-top:3px;
   }
 </style>

@@ -28,7 +28,7 @@
                           ]"
                         ></i>
                       </div>
-                      <div class="message-title-text">{{msgItem.type === 'default'?'告知':titleMap[msgItem.type]}}</div>
+                      <div class="message-title-text">{{msgItem.title ? msgItem.title : titleMap[msgItem.type]}}</div>
                     </div>
                     <div class="message-close-btn" v-if="!msgItem.autoClose">
                       <i class="el-icon-close" @click="removeMessage(mIndex)"></i>
@@ -45,7 +45,7 @@
 
 <script>
   const defaultConfig = {
-    title : '提示',
+    title: '',
     type : 'default',
     content : '默认提示',
     duration : 2000,
@@ -57,6 +57,7 @@
       return {
         otsMessageList : [],
         titleMap : {
+          'default': '告知',
           'success' : '成功',
           'error' : '失败',
           'warning' : '警告'
@@ -72,10 +73,15 @@
             this.autoRemoveMessage(sameItem.mId, sameItem.duration)
         } else {
             let mId = this.getMId();
-            let messageItem = Object.assign(defaultConfig, {
+            // let messageItem = Object.assign({}, defaultConfig, {
+            //   ...options,
+            //   mId
+            // })
+            let messageItem = {
+              ...defaultConfig,
               ...options,
               mId
-            })
+            }
             this.otsMessageList.push(messageItem)
             messageItem.autoClose && this.autoRemoveMessage(mId, messageItem.duration)
         }

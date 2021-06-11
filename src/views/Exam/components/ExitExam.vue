@@ -9,11 +9,15 @@
 <script>
 export default {
     name: 'ExitExam',
+    props: [{
+        name: {
+            type: String,
+            default: '退出考试',
+        }
+    }],
     methods: {
         goExamList () {
-            this.$router.push({
-                name: 'examList'
-            })
+            this.$client.goHome()
         },
     }
 }

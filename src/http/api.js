@@ -10,6 +10,10 @@ export const GetSchoolLogo = 'GetSchoolLogo'
 export const GETSCHOOLCODE = 'GETSCHOOLCODE'
 // 登录
 export const Login = 'Login'
+// 拉起程序直接登录
+export const ClientCheckLogin = 'ClientCheckLogin'
+// 判断程序怎么登录
+export const ClientStart = 'ClientStart'
 // 获取验证码
 export const CheckCode = 'CheckCode'
 // 用户信息
@@ -50,8 +54,14 @@ export const GetPaymentResult = 'GetPaymentResult'
 
 // 获取消息列表
 export const OIMMessageList = 'OIMMessageList'
-
-
+// 消息已读回执
+export const OIMMESSAGEISREAD = 'OIMMESSAGEISREAD'
+// 消息功能是否有新消息
+export const OIMMessageCount = 'OIMMessageCount'
+// 登录页执行
+export const APPLoginRun = 'APPLoginRun'
+// 列表页执行
+export const APPHomeRun = 'APPHomeRun'
 
 // 照片上传相关
 
@@ -86,3 +96,4 @@ export const FACECORPUSCLEBYCLIENT = 'FACECORPUSCLEBYCLIENT'
 export const STARTRANDOMTAKEPHOTO = 'STARTRANDOMTAKEPHOTO'
 // 随机拍照结束 （退出考试 交卷  和返回到列表都调用一下的）
 export const ENDRANDOMTAKEPHOTO = 'ENDRANDOMTAKEPHOTO'
+

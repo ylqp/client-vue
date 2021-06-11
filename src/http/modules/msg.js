@@ -1,6 +1,10 @@
 import request from '../request'
 import { 
-    OIMMessageList
+    OIMMessageList,
+    APPHomeRun,
+    APPLoginRun,
+    OIMMessageCount,
+    OIMMESSAGEISREAD
 } from '../api'
 
 // var msgParam = {
@@ -14,4 +18,19 @@ import {
 // 获取消息列表
 export const getMsgList = (data) => {
     return request(OIMMessageList, data)
+}
+// 登录页执行
+export const loginMsg = () => {
+    return request(APPLoginRun)
+}
+// 菜单执行
+export const navMsg = () => {
+    return request(APPHomeRun)
+}
+// 
+export const countMsg = () => {
+    return request(OIMMessageCount)
+}
+export const readMsg = (data) => {
+    return request(OIMMESSAGEISREAD, data)
 }

@@ -10,7 +10,7 @@ const SENT = process.env.NODE_ENV === 'development' ? 'Sent_Post' : 'Sent'
 class Loading {
   constructor () {
     this.loadingCount = 0
-    this.notLoading = ['GetPaymentResult', 'TempSaveAnswerPaper']
+    this.notLoading = ['GetPaymentResult', 'TempSaveAnswerPaper', 'HideCamera']
     this.$eventBus = Vue.prototype.$eventBus
     this.loadingInstance = null
   }
@@ -55,7 +55,7 @@ const request = async (code, data) => {
         console.log(code)
         window.OTS[SENT](code, null, cdata, function (rdata) {
             try {
-
+                
                 rdata = rdata.replace(/\\'/g, "'");
                 let res = JSON.parse(rdata)
                 let { status } = res

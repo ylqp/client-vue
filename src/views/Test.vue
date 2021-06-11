@@ -43,18 +43,20 @@
             </li> 
         </ul> -->
         <!-- <video-list style="width: 300px" /> -->
-        <pop />
+        <!-- <pop /> -->
+        <help-pop />
   </div>
 </template>
 <script>
 import OtsButton from '../components/Button/OtsButton.vue'
 import ExamNote from '../components/ExamNote.vue'
+import HelpPop from '../components/HelpPop.vue'
 import Search from '../components/Search.vue'
 import SlotPop from '../components/SlotPop.vue'
 import VideoList from '../components/VideoList.vue'
 import Pop from '../testComponents/pop.vue'
 export default {
-    components: { Search, ExamNote, SlotPop, OtsButton, VideoList, Pop },
+    components: { Search, ExamNote, SlotPop, OtsButton, VideoList, Pop, HelpPop },
     name: 'Test',
     data () {
         return {
